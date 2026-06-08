@@ -1,165 +1,167 @@
+
 = Module 03: Declarative management and automation of VMs with DevHub and GitOps
 
 include::vars.adoc[]
 
-GitOps is a modern approach to infrastructure and application management that uses Git as the single source of truth for declarative system configurations. 
+GitOpsは、宣言的なシステム構成の「唯一の真実のソース（Single Source of Truth）」としてGitを使用する、インフラストラクチャおよびアプリケーション管理へのモダンなアプローチです。
 
-By using Git repositories to define and manage infrastructure, GitOps enables automated deployment, version control, and continuous delivery. Changes are made through pull requests, ensuring consistency, auditability, and rollback capabilities. This approach improves collaboration among teams while reducing human errors.
+Gitリポジトリを使用してインフラストラクチャを定義・管理することで、GitOpsは自動デプロイ、バージョン管理、および継続的デリバリー（CD）を可能にします。変更はプルリクエスト（Pull Request）を通じて行われるため、一貫性、監査可能性、およびロールバック機能が保証されます。このアプローチにより、チーム間のコラボレーションが向上すると同時に、ヒューマンエラーが削減されます。
 
-Furthermore you can make use of a tool like Red Hat Developer Hub, to define your virtual machines and other application workloads in a declarative manner that makes it easy for GitOps to deploy and manage.
+さらに、Red Hat Developer Hubのようなツールを活用することで、仮想マシンやその他のアプリケーションワークロードを宣言的な方法で定義し、GitOpsによるデプロイや管理を容易にすることができます。
 
-This module will give you a brief look into how you can declaratively manage virtual machines, and then how virtual machines can be deployed and managed in a more modernized manner by using GitOps.
+このモジュールでは、仮想マシンを宣言的に管理する方法、端的に言えば、GitOpsを使用して仮想マシンをよりモダンな方法でデプロイ・管理する方法について簡単に説明します。
 
 image::summit/400-gitops-architecture.png["GitOps architecture diagram showing Git repository, Argo CD, and OpenShift cluster", link=self,window=blank,width=100%]
 
-== Objectives
+== Objectives（目的）
 
-* Introduction to Red Hat Developer Hub
-* Declarative definitions of virtual machines
-* Advanced operations with Red Hat Developer Hub
-* Introduction to Red Hat OpenShift GitOps
-* Understanding OpenShift GitOps for Virtual Machines
-* Configure and manage the `travel-control` domain with GitOps
+* Red Hat Developer Hub の導入
+* 仮想マシンの宣言的な定義
+* Red Hat Developer Hub を使用した高度な運用
+* Red Hat OpenShift GitOps の導入
+* 仮想マシンにおける OpenShift GitOps の理解
+* GitOps を使用した `travel-control` ドメインの構成と管理
 
 [[intro-devhub]]
 == Introduction to Red Hat Developer Hub
 
-Red Hat Developer Hub (RHDH) is an enterprise-grade internal developer portal designed to simplify and streamline software development processes. Combined with Red Hat OpenShift Container Platform, RHDH empowers platform engineering teams to create customized portals that improve developer productivity, accelerate onboarding, and enable faster application delivery.
+Red Hat Developer Hub (RHDH) は、ソフトウェア開発プロセスを簡素化・合理化するために設計された、エンタープライズグレードの社内開発者向けポータル（IDP: Internal Developer Portal）です。Red Hat OpenShift Container Platformと組み合わせることで、RHDHはプラットフォームエンジニアリングチームがカスタマイズされたポータルを作成できるようにし、開発者の生産性を向上させ、オンボーディング（環境適応）を加速し、迅速なアプリケーション配信を可能にします。
 
-By reducing friction and complexity, RHDH allows developers to focus on writing high-quality code while adhering to enterprise-class best practices.
+摩擦や複雑さを軽減することで、RHDHは開発者がエンタープライズクラスのベストプラクティスを遵守しながら、高品質なコードの記述に集中できるようにします。
 
-RHDH integrates software templates, pre-designed solutions, and dynamic plugins into a centralized platform, providing tailored solutions for operations and development teams in a unified environment.
+RHDHは、ソフトウェアテンプレート、事前設計されたソリューション、および動的プラグインを集中管理型のプラットフォームに統合し、統合された環境で運用チームと開発チームの双方に最適なソリューションを提供します。
 
-=== Key features
+=== Key features（主な機能）
 
-*Centralized Dashboard*
-Provides a single interface for accessing developer tools, CI/CD pipelines, APIs, monitoring tools, and documentation. Integrated with systems like Git, OpenShift, Kubernetes, and JIRA.
+*Centralized Dashboard（中央管理ダッシュボード）*
+開発ツール、CI/CDパイプライン、API、監視ツール、およびドキュメントにアクセスするための単一のインターフェースを提供します。Git、OpenShift、Kubernetes、JIRAなどのシステムと統合されています。
 
-*Dynamic Plugins*
-Add, update, or remove plugins dynamically without downtime. Popular plugins like Tekton, GitOps, Nexus Repository, and JFrog Artifactory are supported and verified by Red Hat.
+*Dynamic Plugins（動的プラグイン）*
+システムを停止することなく、プラグインを動的に追加、更新、または削除できます。Tekton、GitOps、Nexus Repository、JFrog Artifactoryなどの一般的なプラグインがサポートされており、Red Hatによって検証されています。
 
-*Software Templates*
-Simplify development processes by automating tasks such as repository setup, variable insertion, and production pipeline creation.
+*Software Templates（ソフトウェアテンプレート）*
+リポジトリのセットアップ、変数の挿入、本番パイプラインの作成などのタスクを自動化することで、開発プロセスを簡素化します。
 
-*Role-Based Access Control (RBAC)*
-Manage user access with granular security permissions tailored to organizational needs.
+*Role-Based Access Control（RBAC：ロールベースアクセス制御）*
+組織のニーズに合わせた詳細なセキュリティ権限でユーザーアクセスを管理します。
 
-*Scalability*
-Support growing teams and applications while maintaining access to the same tools and services.
+*Scalability（拡張性）*
+同じツールやサービスへのアクセスを維持しながら、拡大するチームやアプリケーションをサポートします。
 
-*Configuration Management*
-Centralized repositories ensure synchronized updates, improving version control and environment configuration.
+*Configuration Management（構成管理）*
+集中管理されたリポジトリにより同期されたアップデートが保証され、バージョン管理と環境構成が向上します。
 
 [[decvms-devhub]]
 == Declarative definitions of virtual machines
 
-For this section of the lab we are going to show how Red Hat Developer Hub can be used to define the definition of a virtual machine in a declarative form, which allows it to be easily self-provisioned on-demand, or to be incorporated into a GitOps based workflow that deploys and managed the lifecycle of the VM.
+ラボのこのセクションでは、Red Hat Developer Hubを使用して仮想マシンの定義を宣言的な形式で作成する方法を示します。これにより、オンデマンドで簡単にセルフプロビジョニングを行ったり、VMのライフサイクルをデプロイ・管理するGitOpsベースのワークフローに組み込んだりできるようになります。 
 
-To get started click on the *Developer Hub* tab on the right side of your showroom console, and click on the *Sign In* button. 
+開始するには、ショールームコンソールの右側にある *Developer Hub* タブをクリックし、*Sign In* ボタンをクリックします。
 
 image::summit/300-devhub-login.png["DevHub Login Screen", link=self,window=blank,width=100%]
 
-A new window will pop up and give you the option to login with your cluster credentials again.
+新しいウィンドウが表示され、クラスターの資格情報で再度ログインするオプションが表示されます。
 
 image::summit/301-devhub-reauth.png["DevHub Reauth", link=self,window=blank,width=100%]
 
+確認として、Red Hat OpenShift環境への再認証には以下の詳細情報を使用できます。
 
-As a reminder, you may use the following details to reauthenticate to your Red Hat OpenShift environment:
+* **Username（ユーザー名）:** {modernize_ocp_virt_username}
+* **Password（パスワード）:** {modernize_ocp_virt_password}
 
-* **Username:** {modernize_ocp_virt_username}
-* **Password:** {modernize_ocp_virt_password}
-
-When you authenticate you will be presented with the Red Hat Developer Hub home screen with options to *Get started*, *Explore*, and *Learn*.
+認証が完了すると、Red Hat Developer Hubのホーム画面が表示され、*Get started（始める）*、*Explore（探索する）*、*Learn（学ぶ）* のオプションが提示されます。
 
 image::summit/302-devhub-homescreen.png["DevHub Home Screen", link=self,window=blank,width=100%]
 
-*Get Started* - This section provides easily accessible links to documentation to learn more about developer hub.
-*Explore* - This is a link to the *Catalog* of APIs and Templates that are defined for your developer-centric projects.
-*Learn* - This is a link to various *Learning Paths* curated training courses developed by Red Hat personnel to help you to make the most out of your new application platform and its versatile tools.
+*Get Started* - デベロッパーハブの詳細を学ぶためのドキュメントへの、簡単にアクセスできるリンクが提供されます。
+*Explore* - 開発者中心のプロジェクト用に定義されているAPIやテンプレートの *Catalog（カタログ）* へのリンクです。
+*Learn* - 新しいアプリケーションプラットフォームとその多用途なツールを最大限に活用できるように、Red Hatの担当者によって用意された様々な *Learning Paths（ラーニングパス）* 研修コースへのリンクです。
 
-The right hand side shows you were you can configure Red Hat Developer Hub by configuring Authentication and RBAC for users as to what projects and tools they can access, set up Git repositories, and manage plugins.
+右側には、ユーザーがどのプロジェクトやツールにアクセスできるかについての認証やRBACの構成、Gitリポジトリの設定、プラグインの管理など、Red Hat Developer Hubの構成を行える場所が表示されています。
 
-Now that we've seen the home screen, lets make use of Developer Hub to create a virtual machine.
+ホーム画面を確認しましたので、Developer Hubを使用して仮想マシンを作成してみましょう。
 
-Click on the *Catalog* item on the left.
+左側にある *Catalog（カタログ）* 項目をクリックします。
 
 image::summit/303-catalog-link.png["Catalog Link", link=self,window=blank,width=100%]
 
-In the *My Org Catalog* screen you will see that there is nothing currently defined. Click the *Self-service* button to get started.
+*My Org Catalog* 画面が表示されますが、現在は何も定義されていません。*Self-service（セルフサービス）* ボタンをクリックして開始します。
 
 image::summit/304-self-service-button.png["Self-service button", link=self,window=blank,width=100%]
 
-When you reach the *Self-service* screen you will notice that a *Template* has been loaded which uses a Git repository to scaffold a virtual machine. You may also notice there is a button that allows you to import your own Git repositories if you would like to work on other projects.
+*Self-service* 画面に移動すると、仮想マシンの雛形（スキャフォールディング）を作成するためにGitリポジトリを使用する *Template（テンプレート）* がロードされていることがわかります。また、他のプロジェクトに取り組みたい場合に、独自のGitリポジトリをインポートできるボタンがあることにも気づくかと思います。
 
-Click the *Choose* button on the *VMs* template to move to the next step.
+*VMs* テンプレートにある *Choose（選択）* ボタンをクリックして、次のステップに進みます。
 
 image::summit/305-self-service-screen.png["Self-service screen", link=self,window=blank,width=100%]
 
-The next screen on the *Self-service* wizard shows us the template has been loaded and you just need to enter a name for the application name.
+*Self-service* ウィザードの次の画面では、テンプレートがロードされていることが示されるため、アプリケーション名（Application Name）を入力するだけで構いません。
 
-Enter your username in the *Application Name* field, and then click the *Review* button to proceed.
+*Application Name* フィールドにご自身のユーザー名を入力し、*Review（確認）* ボタンをクリックして進みます。
 
-[source,shell,subs=attributes,role=execute]
-----
-{modernize_ocp_virt_username}
-----
+## [source,shell,subs=attributes,role=execute]
+
+## {modernize_ocp_virt_username}
 
 image::summit/306-self-service-repo.png["Self-service repo", link=self,window=blank,width=100%]
 
-On the next page click the *Create* button.
+次のページで、*Create（作成）* ボタンをクリックします。
 
 image::summit/307-self-service-create.png["Self-service create", link=self,window=blank,width=100%]
 
-Red Hat Developer Hub will load the code from the GitLab repository that was configured for use and use that to declaratively create the definition of a Virtual Machine. You will see as it completes the process successfully.
+Red Hat Developer Hubは、使用するために構成されたGitLabリポジトリからコードをロードし、それを使用して仮想マシンの定義を宣言的に作成します。プロセスが正常に完了する様子が表示されます。
 
-When you have looked over the output from the build, click the *Open in Catalog* button.
+ビルドの出力を確認したら、*Open in Catalog（カタログで開く）* ボタンをクリックします。
 
 image::summit/308-completed-run.png["Completed run", link=self,window=blank,width=100%]
 
-You will be taken back to the *My Org Catalog* screen which now lists a built component with the name of *{modernize_ocp_virt_username}*. Click on that.
+*My Org Catalog* 画面に戻ると、ビルドされたコンポーネントが *{modernize_ocp_virt_username}* という名前でリストされています。それをクリックします。
 
 image::summit/309-my-org-catalog.png["My Org Catalog with build VM", link=self,window=blank,width=100%]
 
-You will be taken to the component view of the *{modernize_ocp_virt_username}* application that was just built from the Git repository, and will we be given an option to view the source that was created. Click the *View Source* icon.
+先ほどGitリポジトリからビルドされた *{modernize_ocp_virt_username}* アプリケーションのコンポーネントビューに移動し、作成されたソースコードを表示するオプションが表示されます。*View Source（ソースの表示）* アイコンをクリックします。
 
 image::summit/310-view-source.png["View Source Icon", link=self,window=blank,width=100%]
 
-A new tab will load that opens the GitLab repository, and you will see two YAML files that have been created, the *catalog-info.yaml* and the *vm.yaml* which defines our virtual machine. Click on the *vm.yaml* file to see its contents.
+新しいタブでGitLabリポジトリが開き、作成された2つのYAMLファイル、*catalog-info.yaml* と仮想マシンを定義する *vm.yaml* が表示されます。*vm.yaml* ファイルをクリックして、その内容を確認します。
 
 image::summit/311-yaml-files.png["GitLab YAML Files", link=self,window=blank,width=100%]
 
-You will be presented with the YAML definition of the virtual machine that you created through the self-service catalog. We can use this definition to declaratively create a virtual machine, in the same manner we did using the YAML provided by OpenShift Lightspeed in the first module.
+セルフサービスカタログを通じて作成した仮想マシンのYAML定義が表示されます。モジュール1でOpenShift Lightspeedから提供されたYAMLを使用したのと同様に、この定義を使用して仮想マシンを宣言的に作成できます。
 
-Click the 'Copy to clipboard' icon in the corner.
+隅にある「クリップボードにコピー」アイコンをクリックします。
 
 image::summit/312-yaml-vm-copy.png["Copy VM.yaml", link=self,window=blank,width=100%]
 
-Return to your Red Hat OpenShift console, either through the embedded tab, or another window you have had open, and click on the 'plus sign' and click on *Import YAML* from the drop-down menu.
+埋め込みタブ、または開いている別のウィンドウからRed Hat OpenShiftコンソールに戻り、プラス（＋）マーク（インポートボタン）をクリックし、ドロップダウンメニューから *Import YAML（YAML のインポート）* を選択します。
 
 image::summit/313-openshift-console-tab.png["OpenShift Console Tab", link=self,window=blank,width=100%]
 
-Make sure you select your *{modernize_ocp_virt_username}-vms* project from the *Project* list, then paste in the YAML definition for the virtual machine you created in Red Hat Developer Hub, and click the *Create* button.
+*Project（プロジェクト）* リストからご自身の *{modernize_ocp_virt_username}-vms* プロジェクトが選択されていることを確認し、Red Hat Developer Hubで作成した仮想マシンのYAML定義を貼り付けて、*Create（作成）* ボタンをクリックします。
 
 image::summit/314-import-yaml-vm.png["Import YAML VM", link=self,window=blank,width=100%]
 
-You will be taken to the *VirtualMachines* view where you should see your VM shortly enter the *Running* state.
+*VirtualMachines（仮想マシン）* ビューに移動し、まもなくVMが *Running（実行中）* 状態に移行するのを確認できます。
 
 image::summit/315-devhub-vm-running.png["DevHub VM Running", link=self,window=blank,width=100%]
 
-Success, you have used Red Hat Developer Hub to successfully provision a virtual machine through a declarative definition. 
+成功です！Red Hat Developer Hubを使用し、宣言的な定義を通じて仮想マシンのプロビジョニングを正常に行うことができました。
 
-While this was a very simple example, it allows you to begin to imagine the possibilities. Virtual machines with pre-defined software catalogs, or development suites which are defined as templates and all available in a self-service portal for your end users to provision as needed.
+これは非常にシンプルな例でしたが、今後の可能性を想像していただけるかと思います。あらかじめ定義されたソフトウェアカタログや開発スイートを備えた仮想マシンがテンプレートとして定義され、それらすべてがエンドユーザーが状況に応じてプロビジョニングできるようにセルフサービスポータルで利用可能になる世界です。
 
-Also, imagine what you could do if instead of manually deploying a single VM by definition as we just did, if we had the ability to scale those operations with the power of GitOps! The possibilities are endless.
+また、今行ったように手動で定義に基づいて単一のVMをデプロイする代わりに、GitOpsの力を使ってそれらの運用をスケール（拡張）できたら何ができるかを想像してみてください。可能性は無限大です。
 
 [[advanced-devhub]]
 == Advanced operations with Red Hat Developer Hub
 
-For an advanced example of how Red Hat Developer Hub can be used to modernize your approach to working with virtual machines, please view this interactive demonstration which shows how the features of developer hub can be used to create a self-service portal for end users to provision VMs upon request without having to involve their infrastructure teams.
+Red Hat Developer Hubを使用して仮想マシンの操作アプローチをモダナイズする方法の高度な例として、インフラストラクチャチームを介することなく、エンドユーザーが要求に応じてVMをプロビジョニングできるセルフサービスポータルをDeveloper Hubの機能でどのように構築できるかを示す、こちらのインタラクティブデモをご覧ください。
 
-=== Embedded Arcade
+=== Embedded Arcade（組み込みのデモ画面）
 
-NOTE: If you are finding yourself pressed for time at this point, please continue on to the lab sections featuring GitOps below, and return to the interactive demo at your leisure.
+[NOTE]
+====
+現時点で残り時間に追われている場合は、以下のGitOpsを特徴とするラボセクションに進み、お時間があるときにこのインタラクティブデモに戻ってきてください。
+====
 
 ++++
 <!--ARCADE EMBED START--><div style="position: relative; padding-bottom: calc(48.645833333333336% + 41px); height: 0; width: 100%;"><iframe src="https://demo.arcade.software/Dtucjw9jV2mRAGFAi420?embed&embed_mobile=tab&embed_desktop=inline&show_copy_link=true" title="Self-service provisioning VMs with Red Hat Developer Hub" frameborder="0" loading="lazy" webkitallowfullscreen mozallowfullscreen allowfullscreen allow="clipboard-write" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; color-scheme: light;" ></iframe></div><!--ARCADE EMBED END-->
@@ -168,91 +170,86 @@ NOTE: If you are finding yourself pressed for time at this point, please continu
 [[intro-gitops]]
 == Introduction to OpenShift GitOps
 
-OpenShift GitOps, based on *Argo CD*, extends GitOps principles to Red Hat OpenShift environments, offering a comprehensive solution for managing Kubernetes-native applications and virtualized workloads.
+*Argo CD* をベースにした OpenShift GitOps は、GitOpsの原則をRed Hat OpenShift環境に拡張し、Kubernetesネイティブなアプリケーションや仮想化されたワークロードを管理するための包括的なソリューションを提供します。
 
-Red Hat OpenShift GitOps is an operator that provides a workflow that integrates git repositories, continuous integration/continuous delivery (CI/CD) tools, and Kubernetes to realize faster, more secure, scalable software development, without compromising quality.
+Red Hat OpenShift GitOpsは、Gitリポジトリ、継続的インテグレーション/継続的デリバリー（CI/CD）ツール、およびKubernetesを統合したワークフローを提供するオペレーターであり、品質を妥協することなく、より迅速で安全、かつスケーラブルなソフトウェア開発を実現します。
 
-OpenShift GitOps enables customers to build and integrate declarative git driven CD workflows directly into their application development platform.
+OpenShift GitOpsにより、ユーザーは宣言的なGit駆動のCDワークフローをアプリケーション開発プラットフォームに直接構築し、統合することができます。
 
-There’s no single tool that converts a development pipeline to "DevOps". By implementing a GitOps framework, updates and changes are pushed through declarative code, automating infrastructure and deployment requirements, and CI/CD.
+開発パイプラインを「DevOps」へと変換する単一のツールというものは存在しません。GitOpsフレームワークを実装することで、アップデートや変更が宣言的なコードを通じてプッシュされ、インフラストラクチャやデプロイ要件、およびCI/CDが自動化されます。
 
+=== Benefits of OpenShift GitOps for virtual machines (VMs)（仮想マシンにおけるOpenShift GitOpsのメリット）
 
-=== Benefits of OpenShift GitOps for virtual machines (VMs)
+GitOpsは通常、コンテナ化されたアプリケーションに関連付けられますが、OpenShift GitOpsはOpenShift Virtualizationを使用した *仮想マシン（VM）の管理もサポート* しています。これにはいくつかの大きな利点があります。
 
-While GitOps is typically associated with containerized applications, OpenShift GitOps also *supports managing Virtual Machines (VMs)* using OpenShift Virtualization. This provides several key advantages:
+* *一貫した Infrastructure as Code (IaC)*: VMの構成とライフサイクルをGitで管理することにより、チームはKubernetesアプリケーションに使用されるものと同じ宣言적ワークフローを適用でき、一貫性と再現性を確保できます。
+* *自動化されたデプロイとロールバック*: OpenShift GitOpsは、Git内の期待される状態（Desired State）を継続的に監視し、乖離を自動的に調整（リコンサイル）します。これにより、VMが常に正しくデプロイされ、必要に応じて迅速なロールバックが可能になります。
+* *セキュリティとコンプライアンスの向上*: Gitベースのワークフローにより、監査可能な変更管理が可能になり、ポリシーやコンプライアンス基準を強制しながら、VM構成に対するすべての変更を追跡およびレビューできます。
+* *拡張性とハイブリッドクラウドのサポート*: OpenShift GitOpsは、オンプレミス環境とクラウド環境にまたがるVMのデプロイと管理を容易にし、インフラストラクチャ自動化への統一されたアプローチを提供します。
 
-* *Consistent Infrastructure as Code (IaC)*: By managing VM configurations and lifecycle in Git, teams can apply the same declarative workflows used for Kubernetes applications, ensuring consistency and repeatability.
-
-* *Automated Deployments and Rollbacks*: OpenShift GitOps continuously monitors the desired state in Git and automatically reconciles deviations. This ensures VMs are always deployed correctly and allows quick rollbacks if needed.
-
-* *Improved Security and Compliance*: Git-based workflows enable auditable change management, allowing teams to track and review all modifications to VM configurations while enforcing policies and compliance standards.
-
-* *Scalability and Hybrid Cloud Support*: OpenShift GitOps facilitates deploying and managing VMs across on-premises and cloud environments, providing a unified approach to infrastructure automation.
-
-By integrating GitOps principles with OpenShift Virtualization, organizations can streamline VM management, enhance security, and improve operational efficiency in hybrid cloud environments.
-
+GitOpsの原則をOpenShift Virtualizationと統合することで、組織はVM管理を合理化し、セキュリティを強化し、ハイブリッドクラウド環境における運用効率を向上させることができます。
 
 == Getting started
 
-In this module we want to deploy everything declaratively and let it be managed by OpenShift GitOps. 
+このモジュールでは、すべてを宣言的にデプロイし、OpenShift GitOpsによって管理させたいと考えています。
 
-This is a very different approach than in earlier modules where we created a VM manually using either the console or a simple YAML manifest and can help you modernize your virtual machine deployments providing many additional benefits.
+これは、コンソールかシンプルなYAMLマニフェストのいずれかを使用して手動でVMを作成した前のモジュールとは大きく異なるアプローチであり、仮想マシンのデプロイメントをモダナイズして多くの追加のメリットをもたらすのに役立ちます。
 
-Did you know that all of the different lab tenants in this room, even person that you are sitting alongside is performing their tasks in a virtual OpenShift cluster, deployed and managed by GitOps?
+この部屋にいるすべてのラボ受講者（あなたの隣に座っている人も含め）が、GitOpsによってデプロイされ管理されている仮想のOpenShiftクラスターでタスクを実行していることをご知っていましたか？
 
-Lets take a quick look at a how a complex application deployed and managed in via GitOps looks.
+GitOpsを介してデプロイおよび管理されている複雑なアプリケーションがどのように見えるか、簡単に確認してみましょう。
 
 image::summit/401-advanced-argo.png["Complex Argo CD deployment of lab assets", link=self,window=blank,width=100%]
 
-The Argo CD application we deploy in this lab will not be on the scale of the one in this image, but it allows you to imagine the possibilities.
-
+このラボでデプロイするArgo CDアプリケーションは、この画像の規模ほど大きくはありませんが、今後の可能性を想像していただけるかと思います。
 
 [[argo-login]]
 == Log into the user's Argo CD deployment
 
-First, we are going to open the OpenShift GitOps Dashboard.
+まず、OpenShift GitOpsダッシュボードを開きます。
 
-To access that, click the *ArgoCD* tab on the right side of your showroom console, and click on the `LOG IN VIA OPENSHIFT` button, it should automatically log you in. 
+アクセスするには、ショールームコンソールの右側にある *ArgoCD* タブをクリックし、`LOG IN VIA OPENSHIFT` ボタンをクリックします。自動的にログインされるはずです。
 
-If it doesn't automatically log you in, just make use of your current user credentials:
+自動的にログインされない場合は、現在のユーザーの資格情報を使用してください。
 
-* **Username:** {modernize_ocp_virt_username}
-* **Password:** {modernize_ocp_virt_password}
+* **Username（ユーザー名）:** {modernize_ocp_virt_username}
+* **Password（パスワード）:** {modernize_ocp_virt_password}
 
 image::summit/402-argo-login-oauth.png["Argo CD login page with LOG IN VIA OPENSHIFT button", link=self,window=blank,width=100%]
 
-You will be presented with a page to *Authorize Access* on the first login attempt. Click the *Allow selected permissions* button to proceed.
+最初のログイン試行時には、*Authorize Access（アクセスの認可）* のページが表示されます。*Allow selected permissions（選択されたアクセス権を許可）* ボタンをクリックして進みます。
 
 image::summit/403-argo-authorize-access.png["Argo CD authorize access", link=self,window=blank,width=100%]
 
-
 === Welcome to the Argo dashboard
 
-You will see that currently there are no Argo applications running or being managed by OpenShift GitOps.
+現在はOpenShift GitOpsによって実行または管理されているArgoアプリケーションがないことが確認できます。
 
 image::summit/404-argo-dashboard.png["Empty Argo CD dashboard with no applications deployed", link=self,window=blank,width=100%]
-
 
 [[create-argo-app]]
 == Create an Argo CD application
 
-Now that we've logged into Argo CD, let us create an app for the `travel-control` components.
+Argo CDにログインしましたので、`travel-control` コンポーネント用のアプリケーション（App）を作成してみましょう。
 
-An *Argo CD application* is a Kubernetes resource that defines and manages the deployment of workloads based on a Git repository. It continuously syncs the desired application state from Git to the cluster, ensuring consistency and enabling automated rollbacks if deviations occur.
+*Argo CDアプリケーション* とは、Gitリポジトリに基づいてワークロードのデプロイを定義および管理するKubernetesリソースです。アプリケーションの期待される状態をGitからクラスターへと継続的に同期し、一貫性を確保するとともに、乖離が発生した場合には自動ロールバックを可能にします。
 
-In the Argo console we can create a new application by either clicking on the `+ New App` button on the top left, or the `Create Application` button in the middle:
+Argoコンソールでは、左上の `+ New App` ボタン、または中央の `Create Application` ボタンのいずれかをクリックして、新しいアプリケーションを作成できます。
 
 image::summit/405-argo-newapp.png["Argo CD dashboard with New App and Create Application buttons", link=self,window=blank,width=100%]
 
-When we do this the Create App wizard slides out.
+クリックすると、アプリケーション作成（Create App）ウィザードがスライドして表示されます。
 
-NOTE: The wizard has a number of fields to fill out, so we are going to step through the screenshots one at a time.
+[NOTE]
+====
+ウィザードには入力が必要なフィールドがいくつかあるため、スクリーンショットに沿って一つずつ手順を進めていきます。
+====
 
-In the *General* section, give your app the name `travel-control`, use the argo project `default`, and leave the sync policy as `Manual`:
+*General（全般）* セクションで、アプリケーション名に `travel-control` と入力し、argoプロジェクトには `default` を使用し、同期ポリシー（Sync Policy）は `Manual（手動）` のままにします。
 
 image::summit/406-argo-newapp-general.png["Create Application wizard General section with name travel-control and project default", link=self,window=blank,width=100%]
 
-In the *SOURCE* section, copy and paste the repo to Argo CD by setting repository url to the github repo url, leave revision as `HEAD`, and set the path to `module-03/travel-control`:
+*SOURCE（ソース）* セクションで、リポジトリURL（Repository URL）にGitHubのリポジトリURLを設定してGitリポジトリをArgo CDに紐付け、リビジョン（Revision）は `HEAD` のままにし、パス（Path）を `module-03/travel-control` に設定します。
 
 [source,shell,subs="attributes",role=execute]
 ----
@@ -261,10 +258,12 @@ In the *SOURCE* section, copy and paste the repo to Argo CD by setting repositor
 
 image::summit/407-argo-newapp-source.png["Source section with repository URL, revision HEAD, and path module-03/travel-control", link=self,window=blank,width=100%]
 
-NOTE: We have already provided all necessary Kubernetes manifests in this `repository` and `path`. Feel free to explore this Helm Chart if you like. 
+[NOTE]
+====
+この `リポジトリ（repository）` と `パス（path）` には、必要なすべてのKubernetesマニフェストがすでに用意されています。ご興味があれば、このHelmチャートの内容を自由に探索してください。
+====
 
-
-In the *Destination* section, set cluster URL to https://kubernetes.default.svc by copying and pasting the value below, and leave the namespace empty:
+*Destination（宛先）* セクションで、以下の値をコピーして貼り付けることで、クラスターURL（Cluster URL）を `https://kubernetes.default.svc` に設定し、ネームスペース（Namespace）は空のままにします。
 
 [source,shell,subs="attributes",role=execute]
 ----
@@ -273,8 +272,7 @@ https://kubernetes.default.svc
 
 image::summit/408-argo-newapp-destination.png["Destination section with cluster URL set to kubernetes.default.svc", link=self,window=blank,width=100%]
 
-
-In the *Helm* section, provide the username and URL of the Service Mesh ingress gateway by overwriting the `username` and `ossm_ingress` parameters:
+*Helm* セクションで、`username` と `ossm_ingress` パラメーターを上書きして、ユーザー名 and URL of the Service Mesh ingress gateway by overwriting the `username` and `ossm_ingress` parameters:
 
 [source,shell,subs="attributes",role=execute]
 ----
@@ -283,122 +281,121 @@ In the *Helm* section, provide the username and URL of the Service Mesh ingress 
 
 image::summit/409-argo-newapp-helm.png["Helm section with username and ossm_ingress parameters configured", link=self,window=blank,width=100%]
 
-After filling out the information above, click *Create* at the top of the UI to create the `travel-control` application:
+上記の情報をすべて入力したら、UIの上部にある *Create（作成）* をクリックして `travel-control` アプリケーションを作成します。
 
 image::summit/410-argo-newapp-create.png["Top of the Create Application wizard with the Create button highlighted", link=self,window=blank,width=100%]
 
-You will return to the main Argo dashboard, where you can see that the `travel-control` argo application is created, and you can now view its status, which notably is in an OutOfSync state since the application is staged, but has yet to be deployed, and no resources have been created as of yet in our OpenShift cluster.
+メインのArgoダッシュボードに戻ると、`travel-control` argoアプリケーションが作成されていることが確認できます。そのステータスを表示できますが、アプリケーションがステージングされただけでまだデプロイされておらず、OpenShiftクラスター内にはまだリソースが作成されていないため、特に `OutOfSync（同期が不一致）` 状態になっていることがわかります。
 
 image::summit/411-argo-newapp-status.png["Argo CD dashboard showing travel-control application in OutOfSync status", link=self,window=blank,width=100%]
 
-To sync (deploy) the application, you simply have to click on the `SYNC` button of the `travel-control` application
+アプリケーションを同期（デプロイ）するには、`travel-control` アプリケーションの `SYNC` ボタンをクリックするだけです。
 
 image::summit/412-argo-newapp-sync-button.png["travel-control application card with SYNC button highlighted", link=self,window=blank,width=100%]
 
-A new panel will be opened and then, click on `SYNCHRONIZE` button.
+新しいパネルが開きますので、`SYNCHRONIZE` ボタンをクリックします。
 
-image::summit/413-argo-newapp-synchronize-button.png["Sync panel with SYNCHRONIZE button to deploy the application", link=self,window=blank,width=100%]
+image::summit/413-argo-newapp-synchronize-button.png["Sync panel with SYNCHRONIZE button to deploy the application", link=self, window=blank,width=100%]
 
-The panel will close and you will see the `travel-control` application begin to deploy and apply configuration changes.
+パネルが閉じ、`travel-control` アプリケーションのデプロイと構成変更の適用が開始されるのが確認できます。
 
 image::summit/414-argo-newapp-application-working.png["Argo CD showing travel-control application deploying resources", link=self,window=blank,width=100%]
 
-By clicking on the `travel-control` application you open the details of the app, and you'll see which resources have been applied, as well as the Sync status, last sync and application health.
+`travel-control` アプリケーションをクリックすると、アプリケーションの詳細が開きます。どの子リソースが適用されたか、また同期ステータス、最終同期、およびアプリケーションのヘルス状態（Health）を確認できます。
 
 image::summit/415-argo-newapp-application-details.png["Application details showing deployed resources, sync status, and health", link=self,window=blank,width=100%]
 
-Wait for a few minutes until everything is up and running.
+すべてが起動して実行中になるまで、数分待ちます。
 
-To validate that our virtual machine has been successfully provisioned, return to the OpenShift console. Click on `Virtualization -> VirtualMachines` and expand the project *{modernize_ocp_virt_username}-travel-control-new* to see a new virtual machine called *control-vm* deployed.
+仮想マシンが正常にプロビジョニングされたことを検証するため、OpenShiftコンソールに戻ります。`Virtualization（仮想化） -> VirtualMachines（仮想マシン）` をクリックし、*{modernize_ocp_virt_username}-travel-control-new* プロジェクトを展開すると、*control-vm* という名前の新しい仮想マシンがデプロイされていることが確認できます。
 
 image::summit/416-new-control-vm.png["New virtual machine deployed by Argo CD", link=self,window=blank,width=100%]
 
-While this is a very simple example deploying just one virtual machine, the power of GitOps automation can fully integrate both virtual machines and containers into fully complex production applications.
+これは仮想マシンを1つだけデプロイする非常にシンプルな例ですが、GitOps自動化の力により、仮想マシンとコンテナの両方を完全に複雑な本番アプリケーションへと統合させることができます。
 
 [[argo-self-heal]]
 == Validate Argo CD self-healing
 
-One amazing feature of having an application managed by Argo CD, which helps it stand apart from the manual creation of a declarative VM that we performed earlier in this module, is its ability to monitor an application's health should something go awry. It can then resynchronize from the application's definition, effectively healing them when they are in a broken state.
+Argo CDによって管理されるアプリケーションを持つことの素晴らしい機能の一つ（このモジュールの前半で行った宣言型VMの手動作成とは異なる点）は、何か問題が発生した際にアプリケーションの健全性を監視できる機能にあります。その後、アプリケーションの定義から再同期を行い、壊れた状態にあるアプリケーションを効果的に回復（ヒーリング）させることができます。
 
-To test Argo CD’s **self-healing capability**, you can manually delete a Kubernetes resource managed by Argo CD. With **Automated Sync** and **Self-Heal** enabled, Argo CD will detect the drift from the desired Git state and automatically **recreate the deleted resource**, confirming that self-healing is working as expected.
+Argo CDの *セルフヒーリング（Self-healing）能力* をテストするために、Argo CDによって管理されているKubernetesリソースを手動で削除してみましょう。*Automated Sync（自動同期）* と *Self-Heal（セルフヒーリング）* を有効にすると、Argo CDはGit内の期待される状態（Desired State）からの乖離（ドリフト）を検出し、*削除されたリソースを自動的に再作成* します。これにより、セルフヒーリングが期待通りに動作していることを確認できます。
 
-=== Enable self-healing
+=== Enable self-healing（セルフヒーリングの有効化）
 
-First, we need to enable `Auto-Sync` and `Self-Healing` for the travel-control application.
+まず、travel-control アプリケーションの `Auto-Sync` と `Self-Healing` を有効にする必要があります。
 
-Return to your *Argo CD* tab at the top of the console.
+コンソール上部にある *Argo CD* タブに戻ります。
 
-Click on the `DETAILS` button at the top of the `travel-control` application.
+`travel-control` アプリケーションの上部にある `DETAILS` ボタンをクリックします。
 
 image::summit/417-travel-control-details-button.png["travel-control application with DETAILS button highlighted at the top", link=self,window=blank,width=100%]
 
-A panel will slide out, and you will find yourself on the *Summary* tab. Scroll down to the *Sync Policy* section, and click on the `ENABLE AUTO-SYNC` check box.
+パネルがスライドして表示され、*Summary（サマリー）* タブが表示されます。*Sync Policy* セクションまで下にスクロールし、`ENABLE AUTO-SYNC` のチェックボックスをクリックします。
 
 image::summit/418-travel-control-autosync-button.png["Sync Policy section with ENABLE AUTO-SYNC button", link=self,window=blank,width=100%]
 
-A new window will appear for `Enable Auto-Sync`, click on the `OK` button.
+`Enable Auto-Sync` の新しいウィンドウが表示されたら、`OK` ボタンをクリックします。
 
 image::summit/419-travel-control-autosync-ok.png["Enable Auto-Sync confirmation dialog with OK button", link=self,window=blank,width=100%]
 
-With `Auto-Sync` enabled, the *Sync Policy* section changes to include an option for `Self Heal` with a check box next to it. Go ahead and enable it.
+`Auto-Sync` が有効になると、*Sync Policy* セクションが変更され、隣にチェックボックスが付いた `Self Heal` のオプションが表示されます。これを有効にしてください。
 
 image::summit/420-travel-control-sync-policy.png["Sync Policy section showing Auto-Sync enabled with Self Heal Enable button", link=self,window=blank,width=100%]
 
-A new window will appear for `Enable Self Heal`, click on the `OK` button.
+`Enable Self Heal` の新しいウィンドウが表示されたら、`OK` ボタンをクリックします。
 
 image::summit/421-travel-control-selfheal-ok.png["Enable Self Heal confirmation dialog with OK button", link=self,window=blank,width=100%]
 
-Close the panel by clicking on the `X` in the upper right corner.
+右上隅の `X` をクリックしてパネルを閉じます。
 
 image::summit/422-travel-control-details-close.png["Details panel with the X close button in the upper right corner", link=self,window=blank,width=100%]
 
+=== Test self-healing（セルフヒーリングのテスト）
 
-=== Test self-healing
+セルフヒーリング機能をテストするために、*{modernize_ocp_virt_username}-travel-control-new* プロジェクトから *control-vm* を「誤って」削除してみます。
 
-In order to test out the self-healing feature, we are going to "accidentally" delete our *control-vm* from our *{modernize_ocp_virt_username}-travel-control-new* project. 
-
-Return to your Red Hat OpenShift Console, and click on `Virtualization -> VirtualMachines` in the left side navigation menu, followed by the *{modernize_ocp_virt_username}-travel-control-new* project in the center column, and the virtual machine named *control-vm*.
+Red Hat OpenShiftコンソールに戻り、左側のナビゲーションメニューで `Virtualization（仮想化） -> VirtualMachines（仮想マシン）` をクリックし、中央の列で *{modernize_ocp_virt_username}-travel-control-new* プロジェクトを選択してから、*control-vm* という名前の仮想マシンをクリックします。
 
 image::summit/423-virt-console-control-vm.png["VirtualMachines page showing control-vm in the travel-control-new project", link=self,window=blank,width=100%]
 
 IMPORTANT: You will need to perform these next few tasks fairly quickly, or the VM may automatically restart due to Argo CD protecting the VM's desired running state.
 
-On this screen use either the `Stop` button, or select the option for `Stop` from the `Actions -> Control` drop down menu.
+
+この画面で、`Stop（停止）` ボタンを使用するか、`Actions（アクション） -> Control（コントロール）` ドロップダウンメニューから `Stop（停止）` のオプションを選択します。
 
 image::summit/424-stop-control-vm.png["control-vm overview with Stop button and Actions dropdown menu", link=self,window=blank,width=100%]
 
-With the virtual machine stopped, you now have the option to `Delete` the VM available in the `Actions` drop down menu.
+仮想マシンが停止すると、`Actions（アクション）` ドロップダウンメニューでVMを `Delete（削除）` するオプションが利用可能になります。
 
 image::summit/425-delete-control-vm.png["Actions dropdown menu with Delete option for the stopped control-vm", link=self,window=blank,width=100%]
 
-There will be one additional prompt to confirm deleting the virtual machine, click the `Delete` button.
+仮想マシンの削除を確認する追加のプロンプトが1つ表示されますので、`Delete（削除）` ボタンをクリックします。
 
 image::summit/426-vm-confirm-delete.png["Confirm VM deletion", link=self,window=blank,width=100%]
 
-Once deleted, return to the argo dashboard where you will see that the application is `OutOfSync`.
+削除されたらArgoダッシュボードに戻ると、アプリケーションが `OutOfSync（同期が不一致）` になっているのが確認できます。
 
 image::summit/427-application-unhealthy.png["Argo CD showing travel-control application in OutOfSync and unhealthy state during self-healing", link=self,window=blank,width=100%]
 
-The Argo CD dashboard will step through an automated process where it will briefly show the following:
+Argo CDダッシュボードは自動化されたプロセスを進み、短時間のうちに以下のような状態遷移を表示します。
 
-. **Application status as "OutOfSync"** – indicating that the live cluster state no longer matches the Git source.
-. The deleted resource will **disappear from the resource tree** temporarily.
-. Within moments, Argo CD will **auto-sync**, and the deleted resource will **reappear**, restoring the desired state.
-. The status will return to **"Synced" and "Healthy"**, confirming self-healing has taken place.
+. **アプリケーションステータスが「OutOfSync」になる** – 稼働中のクラスターの状態がGitのソースと一致しなくなったことを示します。
+. 削除されたリソースが **リソースツリーから一時的に消失** します。
+. すぐにArgo CDが **自動同期（Auto-sync）** を行い、削除されたリソースが **再表示** され、期待される状態が復元されます。
+. ステータスが **「Synced（同期済み）」および「Healthy（健全）」** に戻り、セルフヒーリングが行われたことが確認されます。
 
 image::summit/428-application-progressing.png["Argo CD progressing through self-healing", link=self,window=blank,width=100%]
 
-After it has completed all of this tasks, it will return to the previous healthy state with all of the application components deployed as desired.
+すべてのタスクが完了すると、期待通りにすべてのアプリケーションコンポーネントがデプロイされた、以前の健全な状態に戻ります。
 
 image::summit/429-application-healthy.png["Argo CD showing travel-control application restored to Synced and Healthy state after self-healing", link=self,window=blank,width=100%]
 
-Return to the OpenShift console where you will see that the virtual machine that you accidentally deleted has been restored to working order.
+OpenShiftコンソールに戻ると、誤って削除した仮想マシンが正常な状態に復元されていることが確認できます。
 
 image::summit/430-vm-running.png["Restored VM running", link=self,window=blank,width=100%]
 
-*Congratulations!* You helped the _Travel Agency_ company to automate their whole solution now through Red Hat OpenShift GitOps.
+*おめでとうございます！* これで、*Travel Agency* 社のソリューション全体を Red Hat OpenShift GitOps を通じて自動化することができました。
 
+== Summary（まとめ）
 
-== Summary
-
-In this module we learned about Red Hat OpenShift GitOps, and how it can be used to deploy an application or a VM in a declarative fashion. We learned about Red Hat Developer Hub, and how it can be used to create and manage those Git repositories used to host VMs. We also demonstrated how once an application or virtual machine are managed by GitOps, it can be used to self-heal applications that have been affected by user error or other unforeseen circumstances by restoring resources to known good desired state.
+このモジュールでは、Red Hat OpenShift GitOpsについて、そしてアプリケーションやVMを宣言的な方法でデプロイするためにそれがどのように使用できるかを学びました。また、Red Hat Developer Hubについて、そしてVMをホストするために使用されるそれらのGitリポジトリを作成・管理するためにそれがどのように活用できるかを学びました。さらに、アプリケーションや仮想マシンが一度GitOpsによって管理されれば、リソースを既知の良好な期待される状態に復元することで、ユーザーエラーやその他の予期せぬ事態によって影響を受けたアプリケーションをセルフヒーリングできることを実証しました。

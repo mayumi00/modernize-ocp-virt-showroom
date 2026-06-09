@@ -17,7 +17,7 @@ include::vars.adoc[]
 
 image::rh1/201-OSSM-ServiceMesh.png[link="self", window=blank, width="100%"]
 
-Red Hat OpenShift Service Mesh は、オープンソースプロジェクトである **Istio**、**Kiali**、**Jaeger** をベースにした統合サービスメッシュソリューションであり、OpenShift 環境におけるマイクロサービス間の通信、セキュリティ、および可視化を簡素化するように設計されています。*トラフィック制御*、*セキュリティポリシー*、および*モニタリング*を含む、サービス間の相互作用を統一された方法で管理できます。
+Red Hat OpenShift Service Mesh は、オープンソースプロジェクトである **Istio**、**Kiali**、**Jaeger** をベースにした統合サービスメッシュソリューションであり、OpenShift 環境におけるマイクロサービス間の通信、セキュリティ、および可視化を簡素化するように設計されています。*トラフィック制御*、*セキュリティポリシー*、および *モニタリング* を含む、サービス間の相互作用を統一された方法で管理できます。
 
 [NOTE]
 ====
@@ -156,7 +156,7 @@ image::rh1/208-terminal-post-scripts.png[link=self, window=blank, width="100%"]
 
 [INFO]
 ====
-# これがどのように行われるかの詳細については、リポジトリ内の各スクリプト（ {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-agency-services-domain.sh[add-envoy-to-travel-agency-services-domain.sh, window=_blank], {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-portal-domain.sh[add-envoy-to-travel-portal-domain.sh, window=_blank], {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-control.sh[add-envoy-to-travel-control.sh, window=_blank] ）を参照してください。
+これがどのように行われるかの詳細については、リポジトリ内の各スクリプト（ {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-agency-services-domain.sh[add-envoy-to-travel-agency-services-domain.sh, window=_blank], {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-portal-domain.sh[add-envoy-to-travel-portal-domain.sh, window=_blank], {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-control.sh[add-envoy-to-travel-control.sh, window=_blank] ）を参照してください。
 ====
 
 これで、すべての *Travel Booking* VM とコンテナがメッシュに含まれ、各ポッド（POD）は *compute*、*guest-console-log*、そして新しく追加された *istio-proxy* の 3つの実行中コンテナで構成されるようになります。
@@ -371,8 +371,8 @@ image::rh1/220-traffic-distribution-80.png[link=self, window=blank, width="100%"
 [NOTE]
 ++++
 <details>
-  <summary style=""><b>About Authorization Policies</b></summary>
-  <p style="color:black;">The authorization policy enforces access control to the inbound traffic in the server side Envoy proxy. Each Envoy proxy runs an authorization engine that authorizes requests at runtime. When a request comes to the proxy, the authorization engine evaluates the request context against the current authorization policies, and returns the authorization result, either <b>ALLOW</b> or <b>DENY</b>. Operators specify Istio authorization policies using <b>YAML</b> notation. </</p>
+<summary style=""><b>AuthorizationPolicy（認可ポリシー）について</b></summary>
+  <p style="color:black;">認可ポリシーは、サーバー側の Envoy プロキシにおけるインバウンド（受信）トラフィックへのアクセス制御を強制します。各 Envoy プロキシは、実行時にリクエストを認可する認可エンジンを実行しています。リクエストがプロキシに到達すると、認可エンジンは現在の認可ポリシーに照らし合わせてリクエストのコンテキストを評価し、<b>ALLOW（許可）</b> または <b>DENY（拒否）</b> のいずれかの認可結果を返します。運用担当者は <b>YAML</b> 形式を使用して Istio の認可ポリシーを指定します。</p>
 </details>
 ++++
 

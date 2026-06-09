@@ -1,115 +1,111 @@
+
 include::vars.adoc[]
 
 = LB8685: Accelerating Infrastructure Modernization with OpenShift Virtualization
 
-Welcome to *Red Hat One*! 
+*Red Hat One* へようこそ！
 
-Many of our labs are intended to demonstrate OpenShift Virtualization as a technology or demonstrate some basic featuresets or operations in the environment to assuage the concerns of customers that are new to the platform entirely or have a basic understanding of the OpenShift Platform. Many of these customers are migrating from a traditional hypervisor where virtualization is their only concern, and the concept of modernization by integrating other technologies and workflows has never crossed their mind. Thus we have the promary purpose of this lab, which is to demonstrate the use of OpenShift Virtualization from a modernized point of view, using new tools and integrations such as OpenShift Lightspeed, and actual workflows using virtual machines and containers to demonstrate how these two technologies can be leveraged together in the application lifecycle. This also includes demonstrations of how concepts of advanced networking, policy-driven operations, and version-controlled configurations can help realize a modernized approach to working with virtual machines and the applications that depend on them.
+私たちのラボの多くは、テクノロジーとしてのOpenShift Virtualizationの実証や、環境における基本的な機能セット、運用のデモを行うことを目的としています。これは、このプラットフォームに初めて触れるお客様や、OpenShiftプラットフォームの基礎的な理解をお持ちのお客様の懸念を解消するためのものです。これらのお客様の多くは、仮想化のみを関心事とする従来のハイパーバイザーから移行してきており、他のテクノロジーやワークフローを統合して「近代化（モダン化）」するという概念自体、考えたこともないケースがほとんどです。
 
-[[value-prop]] 
-== Value Prop
+そこで本ラボでは、OpenShift Virtualizationをモダナイズされた視点から使用することを主目的としています。OpenShift Lightspeedのような新しいツールや統合機能の活用、および仮想マシンとコンテナを組み合わせた実際のワークフローを通じて、アプリケーションのライフサイクルにおいてこれら2つのテクノロジーをどのように共存・活用できるかをデモします。これには、高度なネットワーキング、ポリシー駆動型の運用、バージョン管理された構成（GitOps）といった概念が、仮想マシンおよびそれらに依存するアプリケーションに対するモダンなアプローチをどのように実現するかの実証も含まれています。
 
+[[value-prop]]
+== Value Prop（価値提案）
 
-=== Why use containers and virtualization together?
+=== Why use containers and virtualization together?（なぜコンテナと仮想化を一緒に使うのか？）
 
-- Running containers and virtual machines together on Red Hat OpenShift allows teams to modernize at their own pace, supporting existing VM-based workloads while building new cloud-native applications on a single, consistent platform. 
+* Red Hat OpenShift上でコンテナと仮想マシンを同時に実行することで、チームは独自のペースでモダナイズを進めることができます。既存のVMベースのワークロードを維持しながら、単一の一貫したプラットフォーム上で新しいクラウドネイティブ・アプリケーションを構築できます。
 
+=== Why use GitOps to deploy virtualized environments?（なぜ仮想化環境のデプロイにGitOpsを使うのか？）
 
-=== Why use GitOps to deploy virtualized environments?
+* GitOpsとArgo CDを使用して仮想化環境をコードとして管理（IaC）することにより、チームはガバナンスと一貫性を維持し、プロビジョニングを加速させながら、デプロイやDay 2運用を大幅に簡素化できます。
 
-- By managing virtualized environments as code with GitOps and Argo CD, teams are able to simplify deployment and day-2 operations while accelerating provisioning and maintaining governance and consistency.
+=== How does a Service Mesh affect the way my applications function?（サービスメッシュはアプリケーションの機能にどう影響するか？）
 
-=== How does a Service Mesh affect the way my applications function?
+* サービスメッシュ（Service Mesh）であるIstioを使用することで、チームはOpenShift上のコンテナ型ワークロードとVM間でトラフィック管理、セキュリティ、可視性を一元的に制御できるようになり、統合されたハイブリッド・アプリケーション・プラットフォームが実現します。
 
-- With a service mesh such as Istio, teams can manage traffic, security, and visibility uniformly across containerized workloads and VMs on OpenShift, supporting a unified hybrid application platform.
+=== How can I extend operations at the user level for self-service?（ユーザーレベルの運用をセルフサービスへ拡張するには？）
 
-=== How can I extend operations at the user level for self-service?
+* KubernetesのRBAC（ロールベースアクセス制御）、テンプレート、および自動化を組み合わせることでセルフサービス化が可能になり、プラットフォームチームがガバナンスと制御を維持したまま、ユーザーはオンデマンドでVMやアプリケーションをプロビジョニングできるようになります。
 
-- Self-service is enabled by combining Kubernetes RBAC, templates, and automation so users can provision VMs and applications on demand while platform teams maintain governance and control.
+=== What are the benefits of multicloud operations with OpenShift Virtualization? （OpenShift Virtualizationによるマルチクラウド運用のメリットは？）
 
-=== What are the benefits of multicloud operations with OpenShift Virtualization? 
-
-- With the features and benefits of OpenShift, including virtualization, being made available in the cloud as well as on bare metal deployments in the data center, customers are able to develop a true hybrid cloud infrastructure allowing for all of their workloads, container and VM alike, to be available and run, where they need them to run. 
-
+* 仮想化を含むOpenShiftの機能とメリットは、データセンター内のベアメタル環境だけでなく、クラウド上でも同様に利用できます。これにより、お客様は真のハイブリッドクラウド・インフラストラクチャを構築し、コンテナかVMかを問わず、すべてのワークロードを必要な場所で実行できるようになります。
 
 [[lab-summary]]
-== Lab Summary
+== Lab Summary（ラボの概要）
 
+このラボでは、3つのメインモジュールに加えて、将来的に拡張される予定の2つのインタラクティブなビデオモジュールを扱います。
 
-These are three main modules that will be covered in this lab, as well as two additional interactive video modules that will be expanded upon in the future:
+*VM Foundations with OpenShift Lightspeed（OpenShift LightspeedによるVMの基礎）*:
 
-*VM Foundations with OpenShift Lightspeed*: 
+* 参加者はOpenShift Virtualizationの基本をおさらいし、OpenShift Lightspeedがワークロードのトラブルシューティングやプロビジョニングの支援を通じて、いかに業務を効率化できるかを探ります。
 
-- Attendees will review OpenShift Virtualization basics, and explore how OpenShift Lightspeed can make their jobs easier through assistance with troubleshooting and provisioning workloads.
+*Service Mesh Integration with Virtual Machines（仮想マシンとサービスメッシュの統合）*:
 
-*Service Mesh Integration with Virtual Machines*:
+* 参加者は、コンテナと仮想マシンの両方を利用するアプリケーションをデプロイし、高度なネットワークメトリクス、トラフィックシェーピング、および強化されたセキュリティのためのサービスメッシュを組み合わせることで、アプリケーション管理に対するモダンなアプローチを体験します。
 
-- Attendees will deploy an application that makes use of both containers and virtual machines along with service mesh for advanced network metrics, traffic shaping, and enhanced security in a modernized approach to application management.
+*Declarative Management of VMs with GitOps Automation（GitOps自動化によるVMの宣言型管理）*:
 
-*Declarative Management of VMs with GitOps Automation*:
+* 参加者は、構成、アプリケーションのデプロイ、および管理にGitOpsを利用するアプリケーションをデプロイします。
 
-- Attendees will deploy an application that makes use of GitOps for configuration and application deployment and management.
+*Self-service VM Provisioning with Developer Hub（Developer HubによるセルフサービスVMプロビジョニング）*:
 
-*Self-service VM Provisioning with Developer Hub*:
+* このインタラクティブなビデオモジュールでは、Developer Hubを使用して仮想マシンワークロードのプロビジョニングと管理を行ういくつかの機能について実演します。
 
-- This interactive video module will demonstrate some features of using Developer Hub to provision and manage virtual machine workloads.
+*OpenShift Virtualization in the Cloud（クラウドにおけるOpenShift Virtualization）*:
 
-*OpenShift Virtualization in the Cloud*:
-
-- This interactive video module will demonstrate the deployment and management of OpenShift Virtualization in a number of supported cloud providers.
+* このインタラクティブなビデオモジュールでは、サポートされている複数のクラウドプロバイダーにおけるOpenShift Virtualizationのデプロイと管理について実演します。
 
 [[lab-info]]
-== Lab Information
+== Lab Information（ラボ情報）
 
-
-=== Openshift Cluster Environment
+=== Openshift Cluster Environment（OpenShiftクラスター環境）
 
 [IMPORTANT]
 ====
-You will be using a *shared* OpenShift cluster with OpenShift Virtualization, OpenShift Service Mesh and other components *already installed*. In this lab you are going to explore and leverage these services, but not install them.
+本ラボでは、OpenShift Virtualization、OpenShift Service Mesh、およびその他のコンポーネントが *あらかじめインストールされた「共有」* OpenShiftクラスターを使用します。このラボではこれらのサービスを探索し使用しますが、インストール作業自体は行いません。
 ====
 
-=== Requirements for the Lab Environment
+=== Requirements for the Lab Environment（ラボ環境の要件）
 
-* Please read all instructions carefully when carrying out assigned tasks and do not only focus on the images provided.
-* If you are stuck and need assistance, please raise your hand and a proctor will see to you as soon as possible.
-* Each participant needs to have their own computer with a web browser and internet access.
-* A Chromium-based browser is recommended for the best experience.
+* 提示されている画像だけに気を取られず、割り当てられたタスクを実行する際は、すべての指示を注意深くお読みください。
+* もし途中で行き詰まり、サポートが必要な場合は、手を挙げてください。プロクター（補助員）ができるだけ早く対応に伺います。
+* 各参加者は、Webブラウザとインターネットアクセスを備えた自身のコンピューターを用意する必要があります。
+* 最適な体験を得るために、Chromiumベースのブラウザを推奨します。
 
-=== Lab Instructions and Commands
+=== Lab Instructions and Commands（ラボの指示とコマンドについて）
 
-Here is an overview of the different types of instructions you'll find throughout the lab.
+以下は、ラボ全体を通じて登場する様々なタイプの指示の概要です。
 
 [source,shell,subs=attributes,role=execute]
 ----
-echo 'This is a shell command you should execute in the terminal. 
-You can copy the command with the icon on the right'
+echo 'これはターミナルで実行する必要があるシェルコマンドです。
+右側のアイコンを使用してコマンドをコピーできます'
 ----
 
 [source,shell,subs=attributes]
 ----
-echo 'This is a shell command or shell output. 
-But nothing you need to execute.'
+echo 'これはシェルコマンド、またはシェルの出力結果です。
+ユーザーが実行する必要はありません。'
 ----
 
 ====
-This is an example instruction using your web browser or OpenShift Web Console.
-Just follow the instructions in this box.
+これは、WebブラウザまたはOpenShift Webコンソールを使用した操作手順の例です。
+このボックス内の指示に従って操作を進めてください。
 ====
 
+=== Lab Login（ラボへのログイン）
 
-=== Lab Login
+ログインには以下の詳細情報を使用します。
 
-Use the following details to log in:
-
-* **Console:** link:{modernize_ocp_virt_console_url}[window=blank]
-* **Username:** {modernize_ocp_virt_username}
-* **Password:** {modernize_ocp_virt_password}
+* **Console（コンソール）:** link:{modernize_ocp_virt_console_url}[window=blank]
+* **Username（ユーザー名）:** {modernize_ocp_virt_username}
+* **Password（パスワード）:** {modernize_ocp_virt_password}
 
 image::rh1/00-webconsole-login.png[link="self", window=blank, width=100%]
 
-
-Also you can authenticate to your cluster via the embedded terminal, you can copy/paste the following command:
+また、右側の埋め込みターミナルを介してクラスターへの認証を行うこともできます。以下のコマンドをコピー＆ペーストしてください。
 
 [source,shell,subs=attributes,role=execute]
 ----
@@ -119,25 +115,23 @@ Also you can authenticate to your cluster via the embedded terminal, you can cop
 image::rh1/00-terminal-login.png[link="self", window=blank, width=100%]
 
 [[lab-assets]]
-=== Lab Assets
+=== Lab Assets（ラボアセット）
 
-As the last part of this introduction section, you are asked to download and extract a couple of assets and scripts that will be used in the later lab sections.
+この導入セクションの最後の作業として、以降のラボセクションで使用するいくつかのアセットとスクリプトをダウンロードおよび展開します。
 
-You have an integrated terminal on your right hand side, use it to clone the provided repository with the commands shown below:
+右側にある統合ターミナルを使用して、以下に示すコマンドを実行し、指定されたリポジトリをクローン（複製）してください。
 
 [source,shell,subs=attributes,role=execute]
 ----
 git clone {modernize_ocp_virt_repo}
 ----
 
-List your cloned directory and see if all the assets are available:
+クローンしたディレクトリをリスト表示し、すべてのアセットが利用可能であることを確認します。
 
-[source,shell,role=execute]
 ----
 ls -la modernize-ocp-virt-workspace
 ----
 
 image::rh1/01-console-text.png[link="self", window=blank, width=100%]
 
-At your leisure you can explore the contents of this repo, but now that the introduction is complete, lets get started with the lab.
-
+お時間があるときにこのリポジトリの内容を自由に探索してください。これで導入セクションは完了です。それではラボを開始しましょう！

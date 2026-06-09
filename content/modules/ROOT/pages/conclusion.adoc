@@ -1,91 +1,75 @@
-= Conclusion
+= Conclusion（まとめ）
 
 include::vars.adoc[]
 
-
 image::rh1/700-thank-you.png[link=self, window=blank, width=100%]
 
-
-We hope you have enjoyed *Accelerating Infrastructure Modernization with OpenShift Virtualization* and learning more about modernizing workloads, and workload management with OpenShift Virtualization, Lightspeed, Service Mesh, and Git Ops and how these tools from Red Hat can be used to manage your virtual machine estate on a day-to-day basis, troubleshooting issues, streamlining metrics, and fortifying your deployments as a virtualization administrator. 
+「*Accelerating Infrastructure Modernization with OpenShift Virtualization*」をお楽しみいただけましたでしょうか。OpenShift Virtualization、Lightspeed、Service Mesh、そしてGitOpsを活用したワークロードのモダナイズと管理について、より深い理解を得ていただけたなら幸いです。仮想化管理者として、日々の仮想マシン資産の管理、トラブルシューティング、メトリクスの合理化、そしてデプロイの堅牢化に、Red Hatのこれらのツールがいかに役立つかを体感していただけたかと思います。
 
 [[key_takeaways]]
-== Key Takeaways
+== Key Takeaways（重要なまとめ）
 
-* Red Hat OpenShift Virtualization is an included feature of Red Hat OpenShift, and provides a modern, unified platform for organizations to run and deploy their new and existing virtual machine (VM) workloads. The solution allows for easy migration, modernization, and management of traditional virtual machines on a trusted, consistent, and comprehensive hybrid cloud application platform.
-
-* Red Hat OpenShift Lightspeed is a generative AI-based virtual assistant for Red Hat OpenShift users of all skill levels. Using natural language, users can ask OpenShift Lightspeed questions about Red Hat OpenShift and get step-by-step guidance from it directly within the Red Hat OpenShift web console.
-
-* Red Hat OpenShift Service Mesh, based on the open source Istio, Envoy, and Kiali projects, offers a uniform way to connect, manage, observe, and provide security for microservices-based applications. It includes behavioral insight into—and control of—the networked microservices in your service mesh. 
-
-* Red Hat OpenShift GitOps built on Argo CD, accelerates how teams deliver applications and manage cluster configurations using Git as the source of truth for declarative configurations. It automates deployments and infrastructure updates, ensuring consistency, reducing errors, and maintaining the desired state across multicluster environments.
-
-* Red Hat OpenShift Developer Hub provides an enterprise-grade internal developer portal that improves developer collaboration and accelerates innovation with a centralized, self-service platform. By unifying tools, documentation, and best practices, it enables developers to focus on building and delivering value while ensuring security and compliance at scale.
-
+* Red Hat OpenShift Virtualizationは、Red Hat OpenShiftに標準で含まれている機能であり、組織が新規および既存の仮想マシン（VM）ワークロードを実行・デプロイするためのモダンで統合されたプラットフォームを提供します。このソリューションにより、信頼性が高く、一貫性のある包括的なハイブリッドクラウド・アプリケーション・プラットフォーム上で、従来の仮想マシンを簡単に移行、モダナイズ、および管理できます。
+* Red Hat OpenShift Lightspeedは、あらゆるスキルレベルのRed Hat OpenShiftユーザーを対象とした、生成AIベースの仮想アシスタントです。ユーザーは自然言語を使用してRed Hat OpenShiftに関する質問を投げかけ、Red Hat OpenShift Webコンソール内で直接、ステップバイステップのガイダンスを受け取ることができます。
+* Red Hat OpenShift Service Meshは、オープンソースのIstio、Envoy、およびKialiプロジェクトをベースにしており、マイクロサービスベースのアプリケーションを接続、管理、監視し、セキュリティを提供するための統一された手法を提供します。サービスメッシュ内のネットワーク化されたマイクロサービスに対する動作の洞察と制御機能が含まれています。
+* Argo CDをベースに構築されたRed Hat OpenShift GitOpsは、宣言的な構成の「唯一の真実のソース（Source of Truth）」としてGitを使用することで、チームがアプリケーションを配信し、クラスター構成を管理するプロセスを加速させます。デプロイやインフラストラクチャのアップデートを自動化し、一貫性を確保してエラーを削減し、マルチクラスター環境全体で期待される状態（Desired State）を維持します。
+* Red Hat OpenShift Developer Hubは、エンタープライズグレードの社内開発者向けポータルを提供し、開発者のコラボレーションを向上させ、集中管理されたセルフサービスプラットフォームによってイノベーションを加速します。ツール、ドキュメント、およびベストプラクティスを統合することで、開発者が価値の構築と配信に集中できるようにすると同時に、大規模環境におけるセキュリティとコンプライアンスを確実なものにします。
 
 [[additional_info]]
-== Additional Information
+== Additional Information（追加情報）
 
-=== Free Ebook: 15 Reasons to Adopt Red Hat OpenShift Virtualization
+=== 無料の電子書籍: OpenShift Virtualizationを採用すべき15の理由
 
-* Discover how virtualization infrastruture continues to evolve.
-* Explore options for migration of your existing virtual machines.
-* Take advantage of a large number of benefits across your organization.
-* Learn about deploying a consistent foundation for innovation.
-* Learn how to get started through no cost demonstrations or a Virtual Migration Assessment.
+* 仮想化インフラストラクチャがどのように進化し続けているかをご紹介します。
+* 既存の仮想マシンを移行するためのオプションを探索します。
+* 組織全体で得られる多数のメリットを活用しましょう。
+* イノベーションのための、一貫した基盤のデプロイについて学びます。
+* コストのかからないデモや、仮想移行アセスメント（Virtual Migration Assessment）を通じた開始方法を学びます。
 
-Click the link https://www.redhat.com/en/resources/15-reasons-adopt-openshift-virtualization-ebook[here^] to read it now.
+今すぐ読むには、リンク（ https://www.redhat.com/en/resources/15-reasons-adopt-openshift-virtualization-ebook[こちら^] ）をクリックしてください。
 
+=== 無料の電子書籍: Red Hat OpenShift Service Meshを始める
 
-=== Free Ebook: Getting started with Red Hat OpenShift Service Mesh
+* モダンなサービス管理において、サービスメッシュがいかに重要な役割を果たしているかをご覧ください。
+* サービスメッシュを最大限に活用するために必要な構成、チューニング、およびメンテナンスについて詳しく説明します。
+* 本番環境での利用におけるガバナンス、設計のベストプラクティス、およびDay 2以降の構成について探ります。
 
-* See how Service Meshes play a key role in modern service management.
+今すぐ読むには、リンク（ https://www.redhat.com/en/resources/getting-started-with-openshift-service-mesh-ebook[こちら^] ）をクリックしてください。
 
-* Discover more about the configuration, tuning, and maintenance required to get the most out of your Service Mesh.
+=== 無料の電子書籍: モダンデベロッパー（The Modern Developer）
 
-* Explore governance, design best practices, and configurations for production use on Day2 and beyond.
+* アプリケーション開発の手法がどのように進化したかを学びます。
+* IDP（社内開発者ポータル）の概要、ならびにインナーループ（Inner Loop）とアウターループ（Outer Loop）の構造についての概要を解説します。
+* Red Hatが、そのアプリケーションフレームワーク、統合開発環境（IDE）、バックエンドツール、およびライブラリを通じて、アプリケーション開発のモダナイゼーションをどのようにサポートしているかを探ります。
 
-Click the link https://www.redhat.com/en/resources/getting-started-with-openshift-service-mesh-ebook[here^] to read it now. 
+今すぐ読むには、リンク（ https://www.redhat.com/en/engage/the-modern-developer-20220310[こちら^] ）をクリックしてください。
 
+=== Red Hatラーニングサービス: DO317 Red Hat OpenShift Virtualizationによる仮想マシンの管理
 
-=== Free Ebook: The Modern Developer
+* OpenShiftクラスター上でVMを作成、アクセス、および管理するために必要なスキル。
+* コンテナ向けにこれらリソースの利用とアクセスを制御するのと同様のKubernetes機能を使用して、VMからのCPU、メモリ、ストレージ、およびネットワーキングリソースの利用とアクセスを制御するために必要なスキル。
+* 標準的なKubernetesの機能やOpenShift Virtualizationの拡張機能を使用して、VMの高可用性（HA）を管理するためのアーキテクチャ例。
+* OpenShift上のVMを、ストレージやデータベースなど、OpenShiftクラスター外部のデータセンターサービスに接続するための戦略。
+* Migration Toolkit for Virtualizationオペレーターを使用して、互換性のあるハイパーバイザーからOpenShift VirtualizationにVMを移行するための戦略。
 
-* Learn how application development practices have evolved
+詳細を確認するには、リンク（ https://www.redhat.com/en/services/training/managing-virtual-machines-red-hat-openshift-virtualization-exam[こちら^] ）をクリックしてください。
 
-* Get an overview of the IDP and inner loop and outer loop constructs
+=== Red Hatラーニングサービス: DO328 Istio および Red Hat OpenShift Service Mesh による回復力のあるマイクロサービスの構築
 
-* Explore how Red Hat supports application development modernization via its application frameworks, integrated development environment (IDE), and backend tools and libraries
+* OpenShift Service Mesh、およびそれを構成するオープンソース製品の紹介。
+* サービスメッシュが有効になったワークロードの監視（可視化）を有効にする方法を学びます。
+* トラフィックシェーピングを含む、ネットワークトラフィックの管理について探ります。
+* OpenShift Service Meshと統合されたアプリケーション向けの高度なセキュリティオプションについて学びます。
+* 製品、機能、および統合に関する包括的なレビュー。
 
-Click the link https://www.redhat.com/en/engage/the-modern-developer-20220310[here^] to read it now.
+詳細を確認するには、リンク（ https://www.redhat.com/en/services/training/do328-building-resilient-microservices-with-istio-and-red-hat-openshift-service-mesh[こちら^]  ）をクリックしてください。
 
+=== Red Hatラーニングサービス: DO400 Red Hat DevOpsのパイプラインとプロセス: Jenkins、Git、およびテスト駆動開発によるCI/CD
 
-=== Red Hat Learning Services: DO317 Managing Virtual Machines with Red Hat OpenShift Virtualization
+* バージョン管理と、Gitを使用したワークロードの管理について学びます。
+* OpenShift内でソフトウェアパイプラインを構築し、実行します。
+* テスト駆動開発（TDD）によるリリース戦略とアプリケーションビルドについて探ります。
+* アプリケーションのセキュリティスキャンとコード分析について学びます。
+* OpenShift内のパイプラインを監視し、トラブルシューティングします。
 
-* Skills required to create, access, and manage VMs on OpenShift clusters.
-* Skills required to control usage and access of cpu, memory, storage, and networking resources from VMs using the same Kubernetes features that would also control usage and access to these resources for containers.
-* Sample architectures to manage High Availability (HA) of VMs using standard Kubernetes features and extensions from OpenShift Virtualization.
-* Strategies to connect VMs on OpenShift to data center services outside of their OpenShift cluster, such as storage and databases.
-* Strategies to migrate VMs from compatible hypervisors to OpenShift Virtualization by using the Migration Toolkit for Virtualization operator.
-
-Click the link https://www.redhat.com/en/services/training/managing-virtual-machines-red-hat-openshift-virtualization-exam[here^] to check it out.
-
-=== Red Hat Learning Services: DO328 Building Resilient Microservices with Istio and Red Hat OpenShift Service Mesh
-
-* Introduction to OpenShift Service Mesh, and the open-source products it's comprised of.
-* Learn how to enable observation of service mesh enabled workloads.
-* Explore management of network traffic, including traffic shaping.
-* Learn about advanced security options for applications integrated with OpenShift Service Mesh.
-* A comprehensive review of the product, features, and integration.
-
-Click the link https://www.redhat.com/en/services/training/do328-building-resilient-microservices-with-istio-and-red-hat-openshift-service-mesh[here^] to check it out.
-
-=== Red Hat Learning Services: DO400 Red Hat DevOps Pipelines and Processes: CI/CD with Jenkins, Git, and Test Driven Development
-
-* Learn about version control and managing workload with Git.
-* Build and execute software pipelines in OpenShift.
-* Explore release strategies and application builds with test-driven development.
-* Learn about security scanning and code analysis for applications.
-* Monitor and troubleshoot pipelines in OpenShift.
-
-Click the link https://www.redhat.com/en/services/training/do400-red-hat-devops-pipelines-and-processes-with-jenkins-git-and-test-driven-development[here^] to check it out.
-
-
+詳細を確認するには、リンク（ link https://www.redhat.com/en/services/training/do400-red-hat-devops-pipelines-and-processes-with-jenkins-git-and-test-driven-development[こちら^] ）をクリックしてください。

@@ -39,8 +39,8 @@ Red Hat OpenShift Virtualizationは、Amazon Web Services（AWS）における�
 
 Red Hat OpenShift Virtualizationは、 https://www.redhat.com/en/blog/red-hat-openshift-virtualization-google-cloud[Google Cloud^]  で現在 *テクノロジープレビュー（Technology Preview）* として利用可能です。
 
-Arcade Interactive Demo: Deploy Virtual Machines in OpenShift Virtualization on Red Hat OpenShift Dedicated
-
+*Arcade Interactive Demo: Deploy Virtual Machines in OpenShift Virtualization on Red Hat OpenShift Dedicated*
+ 
 ++++
 <!--ARCADE EMBED START--><div style="position: relative; padding-bottom: calc(60.8805% + 41px); height: 0px; width: 100%;"><iframe src="https://demo.arcade.software/HleIaKgn1Iuf9SrJSt3S?embed&embed_mobile=tab&embed_desktop=inline&show_copy_link=true" title="Deploy Virtual Machines in OpenShift Virtualization on Red Hat OpenShift Dedicated" frameborder="0" loading="lazy" webkitallowfullscreen mozallowfullscreen allowfullscreen allow="clipboard-write" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; color-scheme: light;" ></iframe></div><!--ARCADE EMBED END-->
 ++++

@@ -180,7 +180,7 @@ OpenShift Lightspeedは、以前に尋ねられた内容から情報を推測す
 
 他の質問を投げかけて、お好みに応じてOpenShift Lightspeedを操作してみてください。クラスター全体に関する一部の情報は、お使いの `{user}` アカウントおよびそれに付与されている権限によっては利用できない場合があることに注意してください。
 
-終了したら、右上隅にある `x` アイコンをクリックして、OpenShift Lightspeedのプロンプト履歴をクリアします。
+終了したら、右上隅にある `ゴミ箱` アイコンをクリックして、OpenShift Lightspeedのプロンプト履歴をクリアします。
 
 image::rh1/24-clear-lightspeed-history.png[link="self", window=blank, width="100%"]
 

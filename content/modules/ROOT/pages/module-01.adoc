@@ -1,148 +1,148 @@
+
 = Module 01: VM Foundations with OpenShift Lightspeed
 
 include::vars.adoc[]
 
 == OpenShift Virtualization Introduction and Feature Review
 
-OpenShift Virtualization provides scalable, enterprise-grade virtualization functionality as a feature in Red Hat OpenShift. You can use it to manage virtual machines (VMs) exclusively or alongside container workloads.
+OpenShift Virtualizationは、Red Hat OpenShiftの機能として、スケーラブルでエンタープライズグレードの仮想化機能を提供します。これを使用して、仮想マシン（VM）を専用に管理したり、コンテナワークロードと並行して管理したりできます。
 
 image::rh1/02-ocp-virt-arch.png[link="self", window=blank, width="100%"]
 
-OpenShift Virtualization adds new objects into your OpenShift Container Platform cluster by using Kubernetes custom resources to enable virtualization tasks. These tasks include:
+OpenShift Virtualizationは、Kubernetesのカスタムリソースを使用して仮想化タスクを可能にすることで、OpenShift Container Platformクラスターに新しいオブジェクトを追加します。これらのタスクには以下が含まれます。
 
-* Creating and managing Linux and Windows VMs
-* Running pod and VM workloads alongside each other in a cluster
-* Connecting to VMs through a variety of consoles and CLI tools
-* Importing and cloning existing VMs
-* Managing network interface controllers and storage disks attached to VMs
-* Live migrating VMs between nodes
+* LinuxおよびWindows VMの作成と管理
+* クラスター内でのポッドとVMワークロードの並行実行
+* さまざまコンソールやCLIツールを介したVMへの接続
+* 既存のVMのインポートおよびクローン作成
+* VMにアタッチされたネットワークインターフェースコントローラー（NIC）およびストレージディスクの管理
+* ノード間でのVMのライブマイグレーション
 
+== Objectives（目的）
 
-== Objectives
-
-* The attendee will participate in a brief review of OpenShift Virtualization features.
-* The attendee will create a simple VM by reviewing provisioning options available in OpenShift Virtualization.
-* The attendee will create a custom VM by providing intructions to OpenShift Lightspeed for assistance.
-* The attendee will troubleshoot a VM deployment failure using OpenShift LightSpeed.
+* 受講者は、OpenShift Virtualizationの機能についての簡単なレビューに参加します。
+* 受講者は、OpenShift Virtualizationで利用可能なプロビジョニングオプションを確認し、シンプルなVMを作成します。
+* 受講者は、OpenShift Lightspeedに指示を出して支援を受けながら、カスタムVMを作成します。
+* 受講者は、OpenShift LightSpeedを使用して、VMデプロイメントの失敗をトラブルシューティングします。
 
 [[explore-openshift-virt]]
 == Getting Started with OpenShift Virtualization
 
-Log into your console with the username and password provided in the introduction section.
+導入セクションで提供されたユーザー名とパスワードを使用して、コンソールにログインします。
 
-You will be welcomed to the new OpenShift UI, please click on *Skip tour* on this window.
+新しいOpenShiftのUIが表示されます。このウィンドウで *Skip tour（ツアーをスキップ）* をクリックしてください。
 
 image::rh1/03-welcome-to-openshift.png[link="self", window=blank, width="100%"]
 
-Also, you may notice that the *OpenShift LightSpeed* window is taking up a significant amount of console real estate on initial launch, please minimize this window for now until we are ready to use it.
+また、初期起動時には *OpenShift LightSpeed* のウィンドウがコンソールの大部分を占めていることに気づくかもしれませんが、これを使用する準備ができるまで、今はウィンドウを最小化（非表示）しておいてください。
 
 image::rh1/04-minimize-lightspeed.png[link="self", window=blank, width="100%"]
 
-Please note that you have a dedicated set of projects for your user account to make use of during this lab as well as access to the default project for openshift-virtualization-os-images allowing you to access default virtual machine images.
+このラボでは、お使いのユーザーアカウント専用のプロジェクトセットが用意されているほか、デフォルトのプロジェクトである `openshift-virtualization-os-images` にアクセスして、デフォルトの仮想マシンイメージを利用することができます。
 
 image::rh1/05-user-project-list.png[link="self", window=blank, width="100%"]
 
-Navigate to the OpenShift Virtualization console by clicking on *Virtualization -> VirtualMachines* in the left-side navigation menu.
+左側のナビゲーションメニューで *Virtualization（仮想化） -> VirtualMachines（仮想マシン）* をクリックして、OpenShift Virtualizationコンソールに移動します。
 
 image::rh1/06-virt-navigation.png[link="self", window=blank, width="100%"]
 
-Click on the *{user}-travel-agency* namespace in the center column to see that there are already a number of virtual machines running in the cluster.
+中央の列にある *{user}-travel-agency* ネームスペースをクリックすると、クラスター内ですでにいくつかの仮想マシンが実行されていることが確認できます。
 
 image::rh1/07-vms-overview.png[link="self", window=blank, width="100%"]
 
-We will now explore some default configurations and metrics from a running VM.
+次に、実行中のVMからいくつかのデフォルト構成とメトリクスを確認してみましょう。
 
-Click on the VM named *cars-vm*, this directs you to the VM Overview page.
+*cars-vm* という名前のVMをクリックすると、VMのOverview（概要）ページに移動します。
 
-On this page you will find:
+このページには以下の要素があります。
 
-- Other tabs dedicated to Metrics, Configuration, Events, and other useful tools in tabs near the top. 
-- State management buttons and the dropdown Actions menu in the top-right.
-- Basic utilization information metrics in the bottom-center.
+* 上部付近にあるタブ（Metrics、Configuration、Eventsなど、役立つツールがタブごとに分類されています）。
+* 右上にある状態管理ボタンと、*Actions（アクション）* ドロップダウンメニュー。
+* 中央下部にある基本的なリソース利用状況の情報（メトリクス）。
 
 image::rh1/08-cars-vm-detail.png[link="self", window=blank, width="100%"]
 
-For a deeper look at metrics, click on the `Metrics` tab. 
+メトリクスをより詳細に確認するには、`Metrics（メトリクス）` タブをクリックします。
 
-This gives you an overview of the VM metrics like memory and CPU consumption, storage and networking performance data if you scroll down the page.
+これにより、メモリやCPUの消費量など、VMのメトリクスの概要が表示されます。ページを下にスクロールすると、ストレージやネットワーキングのパフォーマンスデータも確認できます。
 
 image::rh1/09-cars-vm-metrics.png[link="self", window=blank, width="100%"]
 
-From this page we can even dig a bit deeper by using a default Grafana dashboard that has been configured for us to view virtual machine metrics.
+このページから、仮想マシンのメトリクスを表示するために事前に構成されているデフォルトの Grafana ダッシュボードを使用して、さらに深く掘り下げることもできます。
 
-Access it by clicking on the *Virtualization dashboard* link in the top right corner.
+右上隅にある *Virtualization dashboard（仮想化ダッシュボード）* のリンクをクリックしてアクセスします。
 
 image::rh1/09a-cars-vm-dashboard-link.png[link="self", window=blank, width="100%"]
 
-This will provide us with a dashboards page that shows various fields of curated information such as *Top Consumers of Memory*, *Top Consumers of CPU*, and other information commonly sought after in graphic formats like *Storage IOPS Usage by Virtual Machines* and *Network Traffic by Virtual Machines* over time.
+これにより、時間経過に沿った *Top Consumers of Memory（メモリ消費の上位）*、*Top Consumers of CPU（CPU消費の上位）*、およびグラフィカルな形式でよく求められる *Storage IOPS Usage by Virtual Machines（仮想マシンによるストレージIOPS使用量）*、*Network Traffic by Virtual Machines（仮想マシンによるネットワークトラフィック）* など、整理された様々なフィールド情報を示すダッシュボードページが表示されます。
 
 image::rh1/09b-cars-vm-dashboard-cpumem.png[link="self", window=blank, width="100%"]
 
 image::rh1/09c-cars-vm-dashboard-stornet.png[link="self", window=blank, width="100%"]
 
-If we return to our virtual machine overview by clicking on `Virtualization -> VirtualMachines`, and click back on our `cars-vm` we can take a deeper look at the configuration options that can be modified on the VM, by clicking on the `Configuration` tab.
+`Virtualization（仮想化） -> VirtualMachines（仮想マシン）` をクリックして仮想マシンの概要に戻り、もう一度 `cars-vm` をクリックしてから `Configuration（構成）` タブをクリックすると、VM上で変更可能な構成オプションを詳しく確認できます。
 
-This gives you an overview of the VM configuration options that can be modified including CPU and Memory, as well as Storage, Networking, and Scheduling options that are avaialble in the sub menus. Feel free to click through these menus to see the tuneable options that are avaialble to you.
+これにより、変更可能なVMの構成オプションの概要が表示されます。これには、CPUとメモリのほか、サブメニューで利用可能なストレージ、ネットワーキング、およびスケジューリングのオプションが含まれます。これらのメニューをクリックして、利用可能な調整可能なオプションを確認してください。
 
 image::rh1/10-cars-vm-config.png[link="self", window=blank, width="100%"]
 
-In this introduction section we have explored the Virtualization Dashboard in the OpenShift console and the sub-tabs for Metrics, default Dashboards, and virtual machine Configuration. Now we will proceed with additional tasks in OpenShift to create and work with a virtual machine.
-
+この導入セクションでは、OpenShiftコンソールの仮想化ダッシュボードと、Metrics（メトリクス）、デフォルトのダッシュボード、および仮想マシンのConfiguration（構成）のサブタブについて探索しました。ここからは、仮想マシンの作成と操作を行うために、OpenShiftでの追加のタスクに進みます。
 
 [[quick-create-vm]]
 == Quick Create a Virtual Machine
 
-Begin this task by creating a project to organize the virtual machines you will be creating in this and the following sections.
+このセクション以降で作成する仮想マシンを整理するためのプロジェクトを作成することから、このタスクを開始します。
 
-Click on the `Create Project` button in the center column.
+中央の列にある `Create Project（プロジェクトの作成）` ボタンをクリックします。
 
-image::rh1/11-create-project-button.png[link="self", window=blank, width="100%"] 
+image::rh1/11-create-project-button.png[link="self", window=blank, width="100%"]
 
-A new window will launch, name your project {user}-vms, leave the other fields blank, and click on the `Create` button.
+新しいウィンドウが表示されます。プロジェクト名に `{user}-vms` と入力し、他のフィールドは空白のままにして、`Create（作成）` ボタンをクリックします。
 
 image::rh1/12-create-project-window.png[link="self", window=blank, width="100%"]
 
-NOTE: The images in this guide will be static to the user that they were captured under, but the instructions should be dynamic to your particular user account. Please be sure to create things as your designated user.
+[NOTE]
+====
+このガイド内の画像は、それらがキャプチャされた特定のユーザーのものとして静的に表示されますが、指示テキストはお使いの特定のユーザーアカウントに応じて動的に変わります。必ず指定されたご自身のユーザーとして作成を行ってください。
+====
 
-You will be placed in this new project after it is created. Click the `Create VirtualMachine` button in the middle, and select `From template` from the dropdown menu to create your virtual machine.
+プロジェクトが作成されると、その新しいプロジェクトに自動的に移動します。中央にある `Create VirtualMachine（仮想マシンの作成）` ボタンをクリックし、ドロップダウンメニューから `From template（テンプレートから）` を選択して、仮想マシンを作成します。
 
 image::rh1/13-create-vm-button.png[link="self", window=blank, width="100%"]
 
-You will see the templates for both Linux and Windows VMs that are available to you arranged in a number of tiles. Click on the `Red Hat Enterprise Linux 9 VM` tile to create a RHEL9 VM.
+利用可能なLinuxおよびWindows VMのテンプレートがいくつかのタイルで配置されているのが確認できます。`Red Hat Enterprise Linux 9 VM` のタイルをクリックして、RHEL9 VMを作成します。
 
 image::rh1/14-template-catalog.png[link="self", window=blank, width="100%"]
 
-A new window will appear allowing you to configure things like a bootable CD image, modify the disk size of the VM, and configure it's CPU and Memory resources as well as name the VM. For the purpose of this exercise, just name the virtual machine `{user}-rhel9` and click the `Quick create VirtualMachine` button at the bottom.
+新しいウィンドウが表示され、ブート可能なCDイメージなどの設定、VMのディスクサイズの変更、CPUやメモリリソースの構成、およびVMの名前の設定が行えます。この演習の目的としては、仮想マシンの名前に `{user}-rhel9` と入力し、下部にある `Quick create VirtualMachine（仮想マシンのクイック作成）` ボタンをクリックするだけで構いません。
 
 image::rh1/15-quick-create-vm.png[link="self", window=blank, width="100%"]
 
-You will be taken to the VirtualMachine details page withe `Overview` tab just as before where you will see the VM enter the `Provisioning` stage, followed by the `Starting` and finally the `Running` stage when it is up and ready.
+前と同じように `Overview（概要）` タブが表示された仮想マシンの詳細ページに移動し、VMが `Provisioning（プロビジョニング中）` 段階に入り、続いて `Starting（起動中）` 、正式に起動して準備が整うと `Running（実行中）` 段階に遷移するのを確認できます。
 
 image::rh1/16-quick-create-vm-overview.png[link="self", window=blank, width="100%"]
 
-You can click on `Console` tab to see that the machine is running.
+`Console（コンソール）` タブをクリックして、マシンが実行中であることを確認できます。
 
 image::rh1/17-quick-create-vm-console.png[link="self", window=blank, width="100%"]
-
 
 [[lightspeed-intro]]
 == Introduction to OpenShift Lightspeed
 
-For those unfamiliar, https://www.redhat.com/en/technologies/cloud-computing/openshift/lightspeed[OpenShift Lightspeed^] is a generative AI-powered assistant integrated directly into the Red Hat OpenShift web console that can helping users troubleshoot, understand, and manage OpenShift clusters by answering questions, suggesting commands, and analyzing YAML configurations through natural language, connecting with various large language models (LLMs) for tailored assistance. 
+ご存じない方のために説明すると、[https://www.redhat.com/en/technologies/cloud-computing/openshift/lightspeed](https://www.redhat.com/en/technologies/cloud-computing/openshift/lightspeed)[OpenShift Lightspeed] は、Red Hat OpenShiftのWebコンソールに直接統合された、生成AIを搭載したアシスタントです。質問への回答、コマンドの提案、自然言語によるYAML構成の分析を通じて、ユーザーによるトラブルシューティング、理解、およびOpenShiftクラスターの管理を支援し、適切なサポートのために様々な大規模言語モデル（LLM）と連携します。 +
 
-For the rest of this module, we are going to make use of OpenShift Lightspeed, to help us perform several tasks in our cluster, from information gathering, to the creation and troubleshooting of resources.
-
+このモジュールの残りの部分では、OpenShift Lightspeedを活用して、情報収集からリソースの作成やトラブルシューティングにいたるまで、クラスター内でのいくつかのタスクを実行します。
 
 [[getting-started-lightspeed]]
 == Getting Started with OpenShift Lightspeed
 
-Continuing from where we left off, you may recall that we minimized the OpenShift Lightspeed menu when we started the previous section. You can re-open its console by clicking on the icon in the bottom right corner of the screen.
+前のセクションを開始した際、OpenShift Lightspeedのメニューを最小化したのを覚えているかと思います。画面の右下隅にあるアイコンをクリックすることで、そのコンソールを再開できます。
 
 image::rh1/18-lightspeed-icon.png[link="self", window=blank, width="100%"]
 
-The lightspeed window will re-appear. And you can start by asking it basic informative questions about your cluster and the workloads running in it.
+Lightspeedのウィンドウが再表示されます。まずは、お使いのクラスターやその中で実行されているワークロードに関する基本的な情報についての質問から始めてみましょう。
 
-Start by performing a copy/paste action on the following question, and click the `Send` button when ready.
+以下の質問をコピーして貼り付け、準備ができたら `Send（送信）` ボタンをクリックしてください。
 
 [source,shell,subs=attributes,role=execute]
 ----
@@ -151,96 +151,75 @@ How many virtual machines are running in the {user}-vms project?
 
 image::rh1/19-lightspeed-question-one.png[link="self", window=blank, width="100%"]
 
-After a few moments, OpenShift Lightspeed should report that there is `one` VM running in that project, which is the one we quick created a moment ago.
+数秒後、OpenShift Lightspeedはそのプロジェクトで実行されているVMが `1` つであることを報告するはずです。これは、先ほどクイック作成したものです。
 
-It can also tell you where it got this information from, and gives you the opportunity to rate its reply.
+また、この情報をどこから取得したか（ソース情報）を表示し、回答を評価する機能も提供されます。
 
 image::rh1/20-lightspeed-answer-one.png[link="self", window=blank, width="100%"]
 
-Go ahead and give it a `thumbs up` if you are happy with the response, it will also give you the opportunity to provide additional feedback. Click the `Submit` button. This feedback can be used to help train the model for its responses in the future.
+回答に満足した場合は `thumbs up（高評価）` を押してください。追加のフィードバックを入力するダイアログも表示されます。`Submit（送信）` ボタンをクリックします。このフィードバックは、将来の回答に向けたモデルのトレーニングに役立てられます。
 
 image::rh1/21-lightspeed-thumbs-up.png[link="self", window=blank, width="100%"]
 
-Now let us ask it a follow-up question, copy/paste the following question, and click the `Send` button when ready.
+次に、関連する追加の質問をしてみましょう。以下の質問をコピーして貼り付け、準備ができたら `Send（送信）` ボタンをクリックしてください。
 
 [source,shell,subs=attributes,role=execute]
 ----
 What operating system is that VM running?
 ----
-
 image::rh1/22-lightspeed-question-two.png[link="self", window=blank, width="100%"]
 
-After a few moments, OpenShift Lightspeed will correctly answer that the VM in question is a `RHEL9` VM.
+数秒後、OpenShift Lightspeedは該当のVMが `RHEL9` VMであると正確に回答します。
 
 image::rh1/23-lightspeed-answer-two.png[link="self", window=blank, width="100%"]
 
-NOTE: Notice that OpenShift Lightspeed can continue a series of questions by inferring information from those previously asked. In this example, we did not have to restate the project, or tell it specifically which VM we were referring to in the second prompt.
+[NOTE]
+====
+OpenShift Lightspeedは、以前に尋ねられた内容から情報を推測することで、一連の質問を継続できる点に注目してください。この例では、2番目のプロンプトでプロジェクト名を再度述べたり、どのVMについて言及しているかを具体的に伝えたりする必要はありませんでした。
+====
 
-Feel free to play with OpenShift Lighspeed at your leisure, by asking it other questions. Note that some information about the overall cluster may not be available to your {user} account and the permissions granted to it.
+他の質問を投げかけて、お好みに応じてOpenShift Lightspeedを操作してみてください。クラスター全体に関する一部の情報は、お使いの `{user}` アカウントおよびそれに付与されている権限によっては利用できない場合があることに注意してください。
 
-When you are finished, click the `x` icon in the top right corner to clear the OpenShift Lightspeed prompt history.
+終了したら、右上隅にある `x` アイコンをクリックして、OpenShift Lightspeedのプロンプト履歴をクリアします。
 
 image::rh1/24-clear-lightspeed-history.png[link="self", window=blank, width="100%"]
 
-Click the `Erase and start new chat` button to be ready to move along to the next task in this module with a fresh conversation.
+`Erase and start new chat（消去して新しいチャットを開始）` ボタンをクリックして、新しい会話でこのモジュールの次のタスクに進む準備を整えます。
 
 image::rh1/25-erase-and-start-new-chat.png[link="self", window=blank, width="100%"]
 
 [[create-vm-lightspeed]]
 == Create a VM from an OpenShift Lightspeed Prompt
 
-Quick creating a VM as we did earlier in this module is one thing; it shows customers that OpenShift Virtualization essentially "works", and it demonstrates that we can answer their most basic questions often concerning ease of use, or how the user experience differs from what they are used to from their current hypervisor.
+VMをクイック作成することは一つのアプローチです。これはお客様にOpenShift Virtualizationが基本的に「動作する」ことを示し、使いやすさや、現在のハイパーバイザーとユーザー体験がどう異なるかといった最も基本的な疑問への回答になります。
 
-A real use case for a VM often involves customization and configuration of not just the virtual machine itself but of the workloads that it hosts, or essentially the purpose of the VM. This is where a tool like OpenShift Lightspeed can assist by enabling those unfamiliar with the platform to perform actions in an accelerated fashion.
+実際のVMのユースケースでは、仮想マシン自体のカスタマイズや構成だけでなく、それがホストするワークロード、つまり本質的なVMの用途が絡んできます。ここで、OpenShift Lightspeedのようなツールが、プラットフォームに不慣れな人でも迅速にアクションを実行できるように支援します。
 
-In addition to answering questions about your OpenShift cluster and the workloads running there, OpenShift Lightspeed can also be used to help create resources. While it currently does not have the capability of performing cluster managmenet operations on it's own, it can provide example configurations that can be used to perform those actions.
+OpenShiftクラスターやそこで実行されているワークロードに関する質問に答えるだけでなく、OpenShift Lightspeedはリソースの作成を支援するためにも使用できます。現在は自動でクラスター管理操作を実行する機能は持っていませんが、それらのアクションを実行するために使用できる構成例（マニフェスト）を提供してくれます。
 
-In this task we will provide a prompt to OpenShift Lightspeed to ask it to help us create a virtual machine for a specific purpose. Once it responds, we will use what it provides to create the virtual machine that we need.
+このタスクでは、特定の目的のための仮想マシンの作成を支援してもらうよう、OpenShift Lightspeedにプロンプトを投入します。応答があったら、提供された内容を使用して必要な仮想マシンを作成します。
 
 === Create a Prompt for the VM.
 
-Our task is to create a virtual machine that serves as a database server by default without additional configuration by the end user.
+私たちのタスクは、エンドユーザーによる追加の構成なしで、デフォルトでデータベースサーバーとして機能する仮想マシンを作成することです。
 
-////
-Before we get started, lets ensure that we are logged into our cluster via CLI so that we can perform the actions that OpenShift Lightspeed recommends
-
-Login to the console on the right of the Showroom using the following command:
-
-[source,shell,subs=attributes,role=execute]
-----
-{login_command}
-----
-
-image::rh1/26-terminal-login.png[link="self", window=blank, width="100%"]
-
-Use the following command to set the project to the {user}-vms project:
-
-[source,shell,subs=attributes,role=execute]
-----
-oc project {user}-vms
-----
-
-image::rh1/27-terminal-project.png[link="self", window=blank, width="100%"]
-
-With that complete, we can return to our console window and start working with OpenShift Lightspeed!
-////
-
-Copy/Paste the following prompt into OpenShift Lightspeed and click the `Send` button when you are ready.
+以下のプロンプトをコピーしてOpenShift Lightspeedに貼り付け、準備ができたら `Send（送信）` ボタンをクリックしてください。
 
 [source,shell,subs=attributes,role=execute]
 ----
 Create a YAML manifest that creates a VM in the {user}-vms project that has CentOS Stream 9 as it's operating system, to be used as a database-server. Configure it with a username and password through cloudinit, and automatically install mariadb and configure it to run on startup.
 ----
-
 image::rh1/28-create-vm-prompt.png[link="self", window=blank, width="100%"]
 
-OpenShift Lightspeed will respond with with a YAML manifest that can be used to create the VM we have requested and it's rationale for providing it's answer.
+OpenShift Lightspeedは、要求されたVMを作成するために使用できるYAMLマニフェストと、その回答を提供した根拠を返答します。
 
 image::rh1/29-create-vm-answer.png[link="self", window=blank, width="100%"]
 
-NOTE: Due to the nature of generative AI, there is a chance that your response does not look exactly like that provided in the screenshot above.
-
-The YAML provided should look similar to the following:
+[NOTE]
+====
+生成AIの性質上、返ってくる回答が上記のスクリーンショットと完全に一致しない可能性があります。
+====
+提供されるYAMLは以下のようになります。
 
 [source,yaml,subs=attributes,role=execute]
 ----
@@ -288,21 +267,21 @@ spec:
               - systemctl start mariadb
 ----
 
-After copying the YAML above, you can use the OpenShift Quick Create button to deploy the VM.
+上記のYAMLをコピーした後、OpenShiftのプラス（＋）ボタン（クイック作成）を使用してVMをデプロイできます。
 
-Click on the Quick Create button at the top of the console, and select `Import YAML` from the dropdown menu.
+コンソールの最上部にあるプラス（＋）ボタン（インポートボタン）をクリックし、ドロップダウンメニューから `Import YAML（YAML のインポート）` を選択します。
 
 image::rh1/30-quick-create-yaml.png[link="self", window=blank, width="100%"]
 
-Paste the YAML manifest provided and click the `Create` button at the bottom.
+提供されたYAMLマニフェストを貼り付け、下部にある `Create（作成）` ボタンをクリックします。
 
 image::rh1/31-paste-yaml.png[link="self", window=blank, width="100%"]
 
-The VM should start provisioning and after a few moments it will enter the `Running` state. You can see that it was placed in the {user}-vms namespace as directed, and is called database-server, and is running the CentOS Stream 9 operating system.
+VMのプロビジョニングが開始され、数秒後に `Running（実行中）` 状態になります。指示通り `{user}-vms` ネームスペースに配置され、名前は `database-server` で、CentOS Stream 9 オペレーティングシステムが実行されていることが確認できます。
 
 image::rh1/32-lightspeed-vm-running.png[link="self", window=blank, width="100%"]
 
-Click on the `Console` tab, and use the credentials to login, and verify that mariadb is installed, and running by using the following command:
+`Console（コンソール）` タブをクリックし、資格情報を使用してログインして、以下のコマンドを使用して mariadb がインストールされ実行されていることを検証します。
 
 [source,shell,subs=attributes,role=execute]
 ----
@@ -311,47 +290,49 @@ sudo mysql -u root
 
 image::rh1/33-lightspeed-vm-console.png[link="self", window=blank, width="100%"]
 
-
 [[troubleshoot-vm-lightspeed]]
 == Troubleshoot a VM with OpenShift Lightspeed
 
-In addition to answering basic questions about the platform, and generating configurations that can be used to deploy VMs or create other resources, OpenShift Lightspeed can also be used to troubleshoot issues with the platform and applications.
+プラットフォームに関する基本的な質問への回答や、VMのデプロイやその他のリソース作成に使用できる構成の生成に加えて、OpenShift Lightspeedは、プラットフォームやアプリケーションの問題のトラブルシューティングにも使用できます。
 
-In this task we will configure a VM to fail on purpose, and then ask OpenShift lightspeed if it can diagnose our issue to see what it says.
+このタスクでは、意図的に失敗するようにVMを構成し、OpenShift Lightspeedに問題を診断できるかどうかを尋ねて、どのような回答が得られるかを確認します。
 
-Ensure that you are in your `{user}-vms` project and click the `Create` button in the upper right corner and select the `From template` option from the dropdown menu.
+`{user}-vms` プロジェクトにいることを確認し、右上の `Create（作成）` ボタンをクリックして、ドロップダウンメニューから `From template（テンプレートから）` オプションを選択します。
 
 image::rh1/34-create-vm-from-template.png[link="self", window=blank, width="100%"]
 
-On the `Create new VirtualMachine` page select the tile for the Fedora VM.
+`Create new VirtualMachine（新規仮想マシンの作成）` ページで、Fedora VMのタイルを選択します。
 
 image::rh1/35-fedora-tile.png[link="self", window=blank, width="100%"]
 
-When the Fedora VM dialog appears, name your virtual machine `fedora-broken` and click the button to `Customize VirtualMachine`.
+When the Fedora VM dialog appears, name your virtual machine `fedora-broken` and click the button to `Customize VirtualMachine（仮想マシンのカスタマイズ）`.
 
 image::rh1/36-customize-vm.png[link="self", window=blank, width="100%"]
 
-On the `Customize and create VirtualMachine` page, click on the tab for `Disks` and next to the default rootdisk click on the `three-dot` menu and select the `Edit` option.
+`Customize and create VirtualMachine（仮想マシンのカスタマイズと作成）` ページで、`Disks（ディスク）` のタブをクリックし、デフォルトの rootdisk の横にある `3つのドット` のメニューをクリックして `Edit（編集）` オプションを選択します。
 
 image::rh1/37-edit-disk.png[link="self", window=blank, width="100%"]
 
-When the `Edit disk` dialog appears, change the disk size to *10GB*, which is too small to provision the VM correctly. Click the `Save` button on the dialog, and when returned to the main screen, click the `Create VirtualMachine` button.
+`Edit disk（ディスクの編集）` ダイアログが表示されたら、ディスクサイズを *10GB* に変更します。これは、VMを正しくプロビジョニングするには小さすぎるサイズです。ダイアログの `Save（保存）` ボタンをクリックし、メイン画面に戻ったら `Create VirtualMachine（仮想マシンの作成）` ボタンをクリックします。
 
 image::rh1/38-edit-disk-small.png[link="self", window=blank, width="100%"]
 
-NOTE: At this point its likely to assume that a person unfamiliar with how boot images work in OpenShift Virtualization thinks that they have created a VM with a small hard disk to conserve storage space, and are confused as to why the VM won't successfully boot.
+[NOTE]
+====
+この時点で、OpenShift Virtualizationにおけるブートイメージの仕組みに不慣れな管理者は、ストレージ容量を節約するために小さなハードディスクでVMを作成したと考えている可能性が高いと推測されます。そして、なぜVMが正常に起動しないのか困惑するかもしれません。
+====
 
-The VM will stay in the `Provisioning` state and will fail to progress.
+VMは `Provisioning（プロビジョニング中）` 状態のままになり、それ以上進むのに失敗します。
 
 image::rh1/39-vm-provisioning.png[link="self", window=blank, width="100%"]
 
-Clicking on the `Events` tab shows us that the DataVolume was created, and no additional information.
+`Events（イベント）` タブをクリックすると、DataVolumeが作成されたことは表示されますが、それ以上の追加情報はありません。
 
 image::rh1/40-vm-events.png[link="self", window=blank, width="100%"]
 
-Putting ourselves in the shoes of our unfamiliar virtualization admin, this is where we ask OpenShift Lightspeed for help.
+プラットフォームに不慣れな仮想化管理者の立場になって、ここでOpenShift Lightspeedに助けを求めます。
 
-Click on the OpenShift Lightspeed icon in the bottom right corner, and ask it why the VM is unable to boot, and click the `Send` button.
+右下隅にあるOpenShift Lightspeedのアイコンをクリックし、なぜVMが起動できないのかを質問して、`Send（送信）` ボタンをクリックします。
 
 [source,shell,subs=attributes,role=execute]
 ----
@@ -360,15 +341,20 @@ Why is the VM fedora-broken in the {user}-vms project failing to boot?
 
 image::rh1/41-broken-lightspeed-prompt.png[link="self", window=blank, width="100%"]
 
-OpenShift Lightspeed is able to diagnose the issue as storage-related, providing an error message about the DataVolume being smaller than necessary, and providing a potential resolution.
+OpenShift Lightspeedは、問題をストレージ関連として診断し、DataVolumeが必要なサイズよりも小さいというエラーメッセージを提示し、潜在的な解決策を提供することができます。
 
 image::rh1/42-broken-lightspeed-answer.png[link="self", window=blank, width="100%"]
 
-NOTE: Due to the nature of generative AI, there is a chance that your response does not look exactly like that provided in the screenshot above.
+[NOTE]
+====
+生成AIの性質上、返ってくる回答が上記のスクリーンショットと完全に一致しない可能性があります。
+====
 
-IMPORTANT: Prior to moving on to the next section, to conserve resources and ensure a smoot lab experience, make sure that any of the VMs created in the *{user}-vms* project as a part of this module are shut down, and/or deleted. We will not be making use of them again.
+[IMPORTANT]
+====
+次のセクションに進む前に、リソースを節約しスムーズなラボ体験を確保するために、このモジュールの一環として *{user}-vms* プロジェクトで作成したVMがすべてシャットダウン、および/または削除されていることを確認してください。これらは以降使用しません。
+====
 
+== Conclusion（結論）
 
-== Conclusion
-
-In this module we reviewed some fundamentals about virtual machines in OpenShift, and we have been introduced to OpenShift Lightspeed, and how it can be used to answer questions about our platform, and assist us with deploying and troubleshooting applications and VMs.
+このモジュールでは、OpenShiftにおける仮想マシンのいくつかの基本事項を確認し、OpenShift Lightspeedについて、およびプラットフォームに関する質問への回答、アプリケーションやVMのデプロイおよびトラブルシューティングの支援にこれがどのように活用できるかを紹介しました。

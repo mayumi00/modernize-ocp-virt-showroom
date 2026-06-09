@@ -1,56 +1,64 @@
+
 = Module 02: Service Mesh Integration with Virtual Machines
 
 include::vars.adoc[]
 
-In this module we are going to introduce *Red Hat OpenShift Service Mesh* and explore the added features and capabilities, that allow us to elevate the experience of operating and monitoring Virtual Machines(VMs) as first class citizens in a cloud-native world.  
+このモジュールでは、*Red Hat OpenShift Service Mesh* を導入し、その追加機能や拡張機能について探ります。これにより、クラウドネイティブな世界において、仮想マシン（VM）をファーストクラスシチズン（主要な構成要素）として扱いながら、その運用や監視の体験をどのように向上させられるかを確認します。
 
+## Objectives（目的）
 
-## Objectives
-
-* Introducing OpenShift Service Mesh
-* Integrate VMs with OpenShift Service Mesh for advanced networking
-* Implement traffic management rules and review new observability features through OSSM
-* Configure Advanced Security and Testing with Virtual Machines
+* OpenShift Service Mesh の導入
+* 高度なネットワーキングのための VM と OpenShift Service Mesh の統合
+* トラフィック管理ルールの実装、および OSSM を通じた新しい可視化（オブザーバビリティ）機能の確認
+* 仮想マシンを使用した高度なセキュリティとテストの構成
 
 [[about-service-mesh]]
 == About OpenShift Service Mesh
 
 image::rh1/201-OSSM-ServiceMesh.png[link="self", window=blank, width="100%"]
 
-Red Hat OpenShift Service Mesh is an integrated service mesh solution based on the open source projects **Istio**, **Kiali**, and **Jaeger**, designed to simplify microservice communication, security, and observability in OpenShift environments. It provides a uniform way to manage service-to-service interactions, including *traffic control*, *security policies*, and *monitoring*.
+Red Hat OpenShift Service Mesh は、オープンソースプロジェクトである **Istio**、**Kiali**、**Jaeger** をベースにした統合サービスメッシュソリューションであり、OpenShift 環境におけるマイクロサービス間の通信、セキュリティ、および可視化を簡素化するように設計されています。*トラフィック制御*、*セキュリティポリシー*、および*モニタリング*を含む、サービス間の相互作用を統一された方法で管理できます。
 
-NOTE: OpenShift https://www.redhat.com/en/topics/microservices/what-is-a-service-mesh[Service Mesh,window=_blank] is an add-on service that can be installed through an operator.
+[NOTE]
+====
+OpenShift https://www.redhat.com/en/topics/microservices/what-is-a-service-mesh[Service Mesh,window=_blank] は、オペレーターを介してインストールできるアドオンサービスです。
+====
 
-Even though OpenShift Service Mesh is primarily designed for containerized workloads, it also supports VMs by integrating them into the mesh. Key benefits for VMs include:
+OpenShift Service Mesh は主にコンテナ化されたワークロード向けに設計されていますが、メッシュ内に統合することで VM もサポートします。VM における主なメリットは以下の通りです。
 
-* *Consistent Networking & Security* – VMs can securely communicate with containerized workloads using mTLS encryption and access policies.
-* *Unified Observability* – VMs gain visibility through tracing (Jaeger), monitoring (Prometheus, Grafana), and service topology visualization (Kiali).
-* *Traffic Management* – Enables intelligent routing, load balancing, and failover between VMs and microservices.
-* *Gradual Migration* – Allows a hybrid approach, where legacy VMs can coexist and gradually transition into a containerized environment.
-* *Policy Enforcement* – Ensures compliance by applying service-level access control and security policies uniformly across VMs and containers.
+* *一貫したネットワーキングとセキュリティ* – 相互 TLS（mTLS）暗号化とアクセスポリシーを使用することで、VM はコンテナ化されたワークロードと安全に通信できます。
+* *統合された可視化（オブザーバビリティ）* – VM は分散トレーシング（Jaeger）、モニタリング（Prometheus、Grafana）、およびサービストポロジーの視覚化（Kiali）を通じて、通信状態を可視化できます。
+* *トラフィック管理* – VM とマイクロサービス間でのインテリジェントなルーティング、負荷分散、およびフェイルオーバーを可能にします。
+* *段階的な移行* – レガシーな VM を共存させながら、コンテナ環境へ段階的に移行していくハイブリッドアプローチをサポートします。
+* *ポリシーの適用* – VM とコンテナの双方にサービスレベルのアクセス制御とセキュリティポリシーを一律に適用し、コンプライアンスを確保します。
 
-The following section provides additional information on the Service Mesh Architecture. *Feel free to skip the following section to save time* and come back later if needed.
+以下のセクションでは、サービスメッシュのアーキテクチャに関する追加情報を提供しています。*時間を節約するために以下のセクションはスキップし*、必要に応じて後でここに戻ってきても構いません。
 
 === OpenShift Service Mesh Architecture
 
 image::rh1/202-OSSM-Components.png[link="self", window=blank, width="100%"]
 
-OpenShift Service Mesh, delivered as part of the platform, adds the above cross-cutting application capabilities through the following components:
+プラットフォームの一部として提供される OpenShift Service Mesh は、以下のコンポーネントを通じて、上記のような横断的なアプリケーション機能を追加します。
 
-* *istiod*: applies all defined policies (encryption, authorization, traffic management, observability) in the network of VMs and containers included in the mesh.
-* *envoy*: a sidecar container, of a VM or containerized workload, with the ability to receive and apply the policies effectively making a VM part of the mesh. The envoy sits side-by-side to a VM (see the image above) and intercepts all requests coming in and out of it.
-* *Kiali*: visualises through a UI what is configured in the mesh, the network of included applications, the traffic througput and latency, the security utilised, the issues that may occur in the configurations or netwrork, the logs and a host of other features that the mesh offers.
-* The rest of the observbility components (as seen in the image above) contain parts of what `kiali` visualises for a deeper inspection:
-** `Prometheus` collects the _metrics_ emitted by the `envoy` of each container/VM in the mesh, 
-** `Grafana` provides additional dashboards for the operators and business analysts to review on performance, request throughput/latency, success/failures etc.
-* *Gateways*: one or more `ingress gateway` instances support traffic flow into service mesh from the outside. This is required since the mesh comes with `network policies` that disable direct access to VMs/containers in the mesh. Also an `egress gateway` respectively can control outgoing traffic from the mesh to external services.
+* *istiod*: メッシュに含まれる VM やコンテナのネットワークにおいて、定義されたすべてのポリシー（暗号化、認可、トラフィック管理、可視化）を適用します。
+* *envoy*: VM またはコンテナ型ワークロードのサイドカーコンテナであり、ポリシーを受信して適用することで、VM を効果的にメッシュの一部にします。Envoy は VM と並んで配置され（上の画像を参照）、VM に出入りするすべてのリクエストをインターセプトします。
+* *Kiali*: メッシュ内に構成されている内容、含まれるアプリケーションのネットワーク、トラフィックのスループットと遅延、使用されているセキュリティ、構成やネットワークで発生する可能性のある問題、ログ、およびメッシュが提供するその他の多数の機能を UI を通じて視覚化します。
+* その他のオブザーバビリティコンポーネント（上の画像を参照）には、より詳細な検査のために `kiali` が視覚化するデータの一部が含まれています。
+ `Prometheus` は、メッシュ内の各コンテナ/VM の `envoy` から出力される *メトリクス* を収集します。
+ `Grafana` は、運用担当者やビジネスアナリストがパフォーマンス、リクエストのスループット/遅延、成功/失敗などを確認するための追加のダッシュボードを提供します。
+* *Gateways*: 1つ以上の `ingress gateway` インスタンスが、外部からサービスメッシュへのトラフィックフローをサポートします。メッシュには VM/コンテナへの直接アクセスを禁止する `network policies` が付属しているため、このゲートウェイが必要になります。また、`egress gateway` はメッシュから外部サービスへの送信トラフィックを制御できます。
 
-NOTE: The administrators of the cluster you will be using have already done the setup of Service Mesh so lets see how easy it is to enable a a VM to take advantage of these new capabilities.
-
+[NOTE]
+====
+お使いのクラスターの管理者がすでに Service Mesh のセットアップを完了していますので、VM でこれらの新しい機能を有効にすることがいかに簡単であるかを見てみましょう。
+====
 
 == Getting Started
 
-NOTE: All assets for this module are in the folder `module-02` in the repo you cloned in the introduction module. Please change the directory into this folder now.
+[NOTE]
+====
+このモジュール用のすべてのアセットは、導入モジュールでクローンしたリポジトリの `module-02` フォルダにあります。ここでそのディレクトリに移動してください。
+====
 
 [,sh,subs="attributes",role=execute]
 ----
@@ -60,69 +68,74 @@ cd $HOME/modernize-ocp-virt-workspace/module-02
 [[explore-service-mesh]]
 == Explore the Service Mesh Observability Stack
 
-Beginning with Red Hat OpenShift Service Mesh 3, the various components that make up the service mesh functionality as outlined above are integrated into the left hand menu bar through dynamic plugins.
+Red Hat OpenShift Service Mesh 3 以降、上記で概説したサービスメッシュ機能を構成する様々なコンポーネントが、動的プラグインによって左側のメニューバーに統合されています。
 
-Older versions would require that each of the individual services **Istio**, **Kiali**, and **Grafana** be exposed through their own routes, and be made accessible through a console login. The newer version is much more streamlined and easier for users to begin working with.
-
+古いバージョンでは、**Istio**、**Kiali**、**Grafana** の各サービスを独自のルート（Route）経由で公開し、個別のコンソールログインを介してアクセスする必要がありました。新しいバージョンは大幅に合理化され、ユーザーにとって非常に使いやすくなっています。
 
 === Review the Service Mesh Web Console Plugin
 
-Click on `Service Mesh -> Overview` in the left side navigation menu to see a screen that shows information about each Red Hat OpenShift project, and the applications hosted there. As you can see that 
+左側のナビゲーションメニューで `Service Mesh -> Overview（概要）` をクリックすると、各 Red Hat OpenShift プロジェクトおよびそこでホストされているアプリケーションに関する情報を示す画面が表示されます。画面にあるように、
 
 image::rh1/203-service-mesh-overview.png[link="self", window=blank, width="100%"]
 
-On this screen you will see that there are all of the projects in our shared cluster listed. In this lab we will be working with the projects: *{user}-travel-agency*, *{user}-travel-control*, and *{user}-travel-portal*.
+この画面には、共有クラスター内のすべてのプロジェクトがリスト表示されています。このラボでは、*{user}-travel-agency*、*{user}-travel-control*、および *{user}-travel-portal* というプロジェクトを操作します。
 
-Take a closer look at the projects that your user is responsible for.
+ご自身のユーザーが担当するプロジェクトを詳しく見てみましょう。
 
-You can hover over the labels on the project get more information, and you get a report on applications, in this case VMs, in the projects and their current health with a green check mark for healthy, or a red X if there are issues.
+プロジェクト上のラベルにカーソルを合わせると詳細情報が表示され、プロジェクト内のアプリケーション（この場合は VM）と、正常な場合は緑色のチェックマーク、問題がある場合は赤色の X マークで現在のヘルス状態がレポートされます。
 
-Next click on `Service Mesh -> Traffic Graph` in the left side navigation.
+次に、左側のナビゲーションで `Service Mesh -> Traffic Graph（トラフィックグラフ）` をクリックします。
 
-Use the *Namespace* dropdown at the top and search for *{user}-travel* to see your associate projects.
-Select the projects: *{user}-travel-agency*, *{user}-travel-control*, and *{user}-travel-portal*.
+上部にある *Namespace（ネームスペース）* ドロップダウンを使用し、*{user}-travel* を検索して、関連するプロジェクトを表示します。
+*{user}-travel-agency*、*{user}-travel-control*、および *{user}-travel-portal* の各プロジェクトを選択します。
 
 image::rh1/204-traffic-graph-projects.png[link="self", window=blank, width="100%"]
 
-When the projects are selected there will be a brief pause, and the console will attempt to load the traffic graph.
+プロジェクトが選択されると、少しの間を置いて、コンソールがトラフィックグラフをロードしようとします。
 
 image::rh1/205-traffic-graph-empty.png[link="self", window=blank, width="100%"]
 
-The traffic graph is empty! 
+トラフィックグラフが空になっています！
 
-This is to be expected because we have yet to add our existing applications to the mesh. We will perform this in the next step.  
+既存のアプリケーションをまだメッシュに追加していないため、これは想定通りの挙動です。次のステップでこれを実行します。
 
 [[add-service-mesh]]
 == Add VMs & Containers to OpenShift Service Mesh
 
-If it was not apparent until now, you can only apply policies (security, observability etc.) and visualize networktraffic flows to VMs and containers that are part of the mesh!
+これまでの説明でお分かりかと思いますが、メッシュの一部となっている VM やコンテナに対してのみ、ポリシー（セキュリティ、可視化など）の適用やネットワークトラフィックフローの視覚化を行うことができます。
 
-IMPORTANT: In order to become part of the mesh each _Travel Booking_ namespace must be configured to be a *member of the mesh*, and each workload component needs to have an *additional _sidecar container_ injected*, which will intercept the traffic to/from your VM. 
+[IMPORTANT]
+====
+メッシュの一部にするためには、各 *Travel Booking* ネームスペースが *メッシュのメンバー（Member）として構成* されている必要があり、各ワークロードコンポーネントに *追加の「サイドカーコンテナ（Sidecar Container）」がインジェクション（挿入）* され、VM への/からのトラフィックをインターセプトする必要があります。
+====
 
-Take a look at the pods that are associated with the VMs that are in your *{user}-travel-agency* project by clicking on `Workloads -> Pods`, and selecting *{user}-travel-agency* from the dropdown *Project* menu. 
+`Workloads（ワークロード） → Pods（ポッド）` をクリックし、ドロップダウンの *Project* メニューから *{user}-travel-agency* を選択して、*{user}-travel-agency* プロジェクト内の VM に関連付けられているポッドを確認します。
 
 image::rh1/200-mod2-travel-agency-pods.png[link=self, window=blank, width="100%"]
 
-Right now you may notice that the pods associated with each VM have *two containers*.
+現時点では、各 VM に関連付けられたポッドに *2つのコンテナ* があることに気づくかと思います。
 
 image::rh1/206-travel-agency-two-containers.png[link=self, window=blank, width="100%"]
 
-The two containers associated with each virtual machine are the *compute* container, and the *guest-console-log*. You can check this by clicking on any one of the pods in your project and scrolling down to see the container list.
+各仮想マシンに関連付けられている2つのコンテナは、*compute* コンテナと *guest-console-log* コンテナです。プロジェクト内のいずれかのポッドをクリックし、下にスクロールしてコンテナリストを表示することで、これを確認できます。
 
 image::rh1/207-pod-container-list-a.png[link=self, window=blank, width="100%"]
 image::rh1/207-pod-container-list-b.png[link=self, window=blank, width="100%"]
 
-Lets add the _Travel Booking_ application to the service mesh. 
+それでは、*Travel Booking* アプリケーションをサービスメッシュに追加してみましょう。
 
-We do this by adding a sidecar container to each of the workloads. 
+各ワークロードにサイドカーコンテナを追加することでこれを実現します。
 
-NOTE: It's the same process for VMs and containers.
+[NOTE]
+====
+このプロセスは VM でもコンテナでもまったく同じです。
+====
 
-This forms the actual dataplane of the mesh, and consists of an `envoy-proxy` (namely the `istio-proxy` container).
+これがメッシュの実際のデータプレーンを形成し、`envoy-proxy`（具体的には `istio-proxy` コンテナ）で構成されます。
 
-The provided scripts will insert the injection annotation `sidecar.istio.io/inject` in each workload and also restart them, so that service mesh can inject the `istio-proxy` container and start applying the configured policies.
+用意されているスクリプトは、インジェクション用のアノテーション（注釈）である `sidecar.istio.io/inject` を各ワークロードに挿入し、それらを再起動します。これにより、サービスメッシュが `istio-proxy` コンテナをインジェクションし、構成されたポリシーの適用を開始できるようになります。
 
-Execute the following scripts in the *Terminal* to the right:
+右側の *ターミナル* で以下のスクリプトを実行します。
 
 [,sh,subs="attributes",role=execute]
 ----
@@ -141,54 +154,57 @@ Execute the following scripts in the *Terminal* to the right:
 
 image::rh1/208-terminal-post-scripts.png[link=self, window=blank, width="100%"]
 
-INFO: For details of how this is done see the scripts at {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-agency-services-domain.sh[add-envoy-to-travel-agency-services-domain.sh, window=_blank], {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-portal-domain.sh[add-envoy-to-travel-portal-domain.sh, window=_blank], {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-control.sh[add-envoy-to-travel-control.sh, window=_blank]. 
+[INFO]
+====
+# これがどのように行われるかの詳細については、リポジトリ内の各スクリプト（ {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-agency-services-domain.sh[add-envoy-to-travel-agency-services-domain.sh, window=_blank], {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-portal-domain.sh[add-envoy-to-travel-portal-domain.sh, window=_blank], {modernize_ocp_virt_repo}/blob/main/module-02/add-envoy-to-travel-control.sh[add-envoy-to-travel-control.sh, window=_blank] ）を参照してください。
+====
 
-Now we have included all _Travel Booking_ VMs and Containers in the mesh, and each POD now consists of three running conainers: *compute*, *guest-console-log*, and now the *istio-proxy* container.
+これで、すべての *Travel Booking* VM とコンテナがメッシュに含まれ、各ポッド（POD）は *compute*、*guest-console-log*、そして新しく追加された *istio-proxy* の 3つの実行中コンテナで構成されるようになります。
 
 image::rh1/209-travel-agency-three-containers.png[link=self, window=blank, width="100%"]
 
 image::rh1/210-cars-vm-three-containers.png[link=self, window=blank, width="100%"]
 
-*This is it!!* The VMs can now take advantage of all the service mesh features.
+*手順はこれだけです！* これで VM はサービスメッシュのすべての機能を利用できるようになりました。
 
 [[validate-apps]]
 == Validate Service Mesh Enabled Applications
 
-With the istio-proxy container now added to each virtual machine workload, we are now able to vizualise network information about the _Travel Booking_ services in our three namespaces. 
+各仮想マシンのワークロードに `istio-proxy` コンテナが追加されたことで、3つのネームスペースにおける *Travel Booking* サービスのネットワーク情報を視覚化できるようになりました。
 
-Lets return to the `Service Mesh -> Traffic Graph` menu and see what type of information the graph has for us now.
+`Service Mesh -> Traffic Graph` メニューに戻り、グラフにどのような情報が表示されるかを確認してみましょう。
 
-image::rh1/211-traffic-graph-data.png[link=self, window=blank, width="100%"]  
+image::rh1/211-traffic-graph-data.png[link=self, window=blank, width="100%"]
 
-The *Versioned App Graph* shows the whole network of microservices (VMs and containers) and the traffic flowing between them.
+*Versioned App Graph* には、マイクロサービス全体（VM とコンテナ）のネットワークと、それらの間を流れるトラフィックが表示されます。
 
-There is a button at the bottom of the graph that will display the *Legend* for the traffic graph, which will be helpful in determining what is what in the graph.
+グラフの下部にはトラフィックグラフの *Legend（凡例）* を表示するボタンがあり、グラフ内の各要素が何を意味しているかを判断するのに役立ちます。
 
 image::rh1/212-legend-button.png[link=self, window=blank, width="100%"]
 
-This shows us now how we can see containers and VMs working side by side within the platform and how the mesh is integrating them without distinguishing on the technology of their runtime. 
+これにより、コンテナと VM がプラットフォーム内でどのように並んで動作しているか、またメッシュがそれらのランタイム技術を区別することなくどのように統合しているかを確認できます。 +
 
-And all you had to do was to make 1 annotation change to each VM resource.
+そして、あなたが行う必要があった作業は、各 VM リソースに1つのアノテーション（注釈）を追加することだけでした。
 
 [[expose-route]]
 == Expose A VM-Based Application Route
 
-Have you noticed that for all we've talked about it, that you still have not been able to access the _Travel Booking_ application UI?
+これほど説明してきたにもかかわらず、まだ *Travel Booking* アプリケーションの UI にアクセスできていないことに気づきましたか？
 
-It's because there is no route configured to expose the services to the outside world.
+これは、外部にサービスを公開するためのルート（Route）がまだ構成されていないためです。
 
-Since, the user interface is not accessible yet, we will test the solution through internal service-to-service communications. 
+ユーザーインターフェースにはまだアクセスできないため、まずは内部のサービス間通信を通じてソリューションをテストします。
 
-We are going to simulate a booking request by sending a request for a travel quote from the `travels` portal in the *{user}-travel-portal* namespace to the `travels-vm` VM in the *{user}-travel-agency* namespace.
+ここでは、*{user}-travel-portal* ネームスペース内の `travels` ポータルから、*{user}-travel-agency* ネームスペース内の `travels-vm` VM へ旅行の見積もりリクエストを送信し、予約リクエストをシミュレートします。
 
-Run the following command to query the _Travel Booking_ application, and verify that it is functioning.
+次のコマンドを実行して *Travel Booking* アプリケーションをクエリし、正常に機能していることを検証します。
 
 [,sh,subs="attributes",role=execute]
 ----
 oc -n {modernize_ocp_virt_username}-travel-portal exec $(oc -n {modernize_ocp_virt_username}-travel-portal get po -l app=travels|awk '{print $1}'|tail -n 1) -- curl -s travels-vm.{modernize_ocp_virt_username}-travel-agency.svc.cluster.local:8000/travels/London |jq
 ----
 
-You should receive a quote similar to the one following:
+以下のような見積もり結果（JSON）が返ってくるはずです。
 
 [source,yaml,subs=attributes]
 ----
@@ -244,15 +260,15 @@ You should receive a quote similar to the one following:
 }
 ----
 
-We will now use the Service Mesh and the Kubernetes Gateway API to expose the `control-vm` service where you will get to see the Travel Control dashboard.
+ここからは、Service Mesh と Kubernetes Gateway API を使用して `control-vm` サービスを公開し、Travel Control ダッシュボードを表示できるようにします。
 
-There is an Istio Gateway already deployed in the istio-gateway namespace, and an external Route in that namespace exposing the gateway to outside traffic. 
+`istio-gateway` ネームスペースにはすでに Istio Gateway がデプロイされており、そのネームスペース内の外部 Route によってゲートウェイが外部トラフィックに公開されています。
 
-You can see it by clicking on `Service Mesh -> Istio Config` in the left side navigation menu.
+左側のナビゲーションメニューで `Service Mesh -> Istio Config` をクリックすると確認できます。
 
 image::rh1/213-istio-config.png[link=self, window=blank, width="100%"]
 
-In this exercise you will create an HTTPRoute (Gateway API) that attaches to that existing gateway and forwards HTTP requests to the control-vm service. Copy and paste the following into your terminal on the right side to complete this action.
+この演習では、既存のゲートウェイにアタッチし、HTTP リクエストを `control-vm` サービスに転送する `HTTPRoute`（Gateway API）を作成します。右側のターミナルに以下をコピー＆ペーストして、このアクションを実行します。
 
 [,bash,subs="attributes",role=execute]
 ----
@@ -279,79 +295,78 @@ spec:
 
 image::rh1/214-istio-gateway-terminal.png[link=self, window=blank, width="100%"]
 
-If everything is correct, you should now be able to access the Travel Control dashboard through the istio-gateway.
+すべてが正しく構成されていれば、`istio-gateway` を介して Travel Control ダッシュボードにアクセスできるようになります。
 
-Click on the link here: https://{modernize_ocp_virt_username}-istio-gateway.{modernize_ocp_virt_apps_domain}[Travel Control Dashboard^]
+こちらのリンクをクリックしてください： https://{modernize_ocp_virt_username}-istio-gateway.{modernize_ocp_virt_apps_domain}[Travel Control Dashboard^]
 
 image::rh1/215-travel-control-dashboard.png[link=self, window=blank, width="100%"]
-
 
 [[canary-release]]
 == Versioning VMs with a Canary Release
 
-Adding virtual machines and containers to a service mesh is not only about networking, or vizualization of traffic flows. Often you will be required to deploy and maintain multiple versions of an application to provide new features to a subset of customer, or to test a site update before going live to the general public. 
+サービスメッシュに仮想マシンやコンテナを追加することは、ネットワークの監視やトラフィックフローの視覚化だけが目的ではありません。一部のお客様に新機能を提供したり、一般公開する前にサイトのアップデートをテストしたりするために、アプリケーションの複数のバージョンをデプロイして維持することが求められる場合が多くあります。 +
 
-. In this Task, you will be releasing a new version *v2* of the *cars-vm* component, allowing *10%* of new customers to access this new service, whilst the remainder will continue to use version *v1*. 
+. このタスクでは、*cars-vm* コンポーネントの新バージョン *v2* をリリースし、新規顧客の *10%* がこの新サービスにアクセスできるようにし、残りの顧客は引き続きバージョン *v1* を使用するように構成します。 +
 
-. If everything goes well, you will gradually increase up to *80%* of the traffic to version *v2* by running the command again with different attributes.
+. すべてが正常に動作することを確認したら、異なる属性でコマンドを再度実行することにより、バージョン *v2* へのトラフィックのルーティングを段階的に *80%* まで引き上げます。 +
 
-. In order to achieve this, you are going to deploy a new VM with the name `cars-vm-v2` and a label `version=v2`
+. これを実現するために、`cars-vm-v2` という名前で `version=v2` というラベルを持つ新しい VM をデプロイします。 +
 
-. Then you need to configure a `DestinationRule` to be able to direct the traffic to both versions of the `cars-vm` service.
+. 次に、`cars-vm` サービスの双方のバージョンにトラフィックを振り分けられるように、`DestinationRule` を構成します。 +
 
-. Finally, you will create a `VirtualService` to split the traffic between the 2 versions according to the defined percentages.
+. 最後に、定義された比率（パーセンテージ）に従って2つのバージョン間でトラフィックを分割するための `VirtualService` を作成します。 +
 
-. For more details, find the manifests used {modernize_ocp_virt_repo}/blob/main/module-02/multipleversions-for-car-vm-in-the-mesh.sh[here,window=_blank].
+. 詳細については、使用されるマニフェスト（ {modernize_ocp_virt_repo}/blob/main/module-02/multipleversions-for-car-vm-in-the-mesh.sh[こちら,window=_blank] ）を参照してください。
 
-Ensure that you are in the *{user}-travel-agency* project in your terminal on the right, and then execute the script below which delivers all the above configurations:
+右側のターミナルで *{user}-travel-agency* プロジェクトにいることを確認し、上記のすべての構成を配信する以下のスクリプトを実行します。
 
 [,sh,subs="attributes",role=execute]
 ----
 ./multipleversions-for-car-vm-in-the-mesh.sh 90 10
 ----
 
-With the script completed successfully, click on `Virtualization -> VirtualMachines` and view the new `cars-vm-v2` running in the *{user}-travel-agency* project.
+スクリプトが正常に完了したら、`Virtualization（仮想化） -> VirtualMachines（仮想マシン）` をクリックし、*{user}-travel-agency* プロジェクト内で新しい `cars-vm-v2` が実行されていることを確認します。
 
 image::rh1/216-cars-vm-v2.png[link=self, window=blank, width="100%"]
 
-Now click on `Service Mesh -> Istio Config`. This will now list the new traffic management configurations under the `{user}-travel-agency` project.
+次に、`Service Mesh -> Istio Config` をクリックします。これにより、`{user}-travel-agency` プロジェクトの下に新しいトラフィック管理構成がリスト表示されます。
 
 image::rh1/217-istio-config-traffic.png[link=self, window=blank, width="100%"]
 
-Shortly after creating the traffic configuration you will start seeing the result of the traffic split in the traffic graph as well. Click on `Service Mesh -> Traffic Graph` to return to that view.
+トラフィック構成を作成して間もなく、トラフィック分割の結果がトラフィックグラフにも反映され始めます。`Service Mesh -> Traffic Graph` をクリックしてそのビューに戻ります。
 
-Notice that `cars-vm` is now directing traffic to both `v1` and `v2`. 
+`cars-vm` が `v1` と `v2` の両方にトラフィックを振り分けていることを確認してください。
 
 image::rh1/218-traffic-graph-v1-v2.png[link=self, window=blank, width="100%"]
 
-The 2 drop-down menus (top right) can define the graph refreshing periods.
+右上にある2つのドロップダウンメニューで、グラフの更新周期などを定義できます。
 
-Select *Display -> Traffic Distribution* from the drop down menu at the top to visualize the traffic percentages between the services.
+上部のドロップダウンメニューから *Display -> Traffic Distribution* を選択して、サービス間のトラフィック比率を可視化します。
 
 image::rh1/219-traffic-distribution.png[link=self, window=blank, width="100%"]
 
-After you have verified the new version is stable go ahead and increase the traffic routing for version `v2` to `80%`.
+新しいバージョンが安定していることを確認できたら、バージョン `v2` へのトラフィックルーティングを `80%` に引き上げます。
 
 [,sh,subs="attributes",role=execute]
 ----
 ./multipleversions-for-car-vm-in-the-mesh.sh 20 80
 ----
 
-The *Istio config* has now been updated and soon the traffic graph should show `80%` traffic flowing to version `v2`. 
+*Istio 構成* が更新され、間もなくトラフィックグラフにバージョン `v2` へ流れるトラフィックが `80%` であることが表示されます。
 
 image::rh1/220-traffic-distribution-80.png[link=self, window=blank, width="100%"]
 
 [[auth-policies]]
 == Access Limitations with Authorization Policies
 
-Outside of network traffic monitoring and shaping, enhanced security is another benefit added by integrating into a service mesh.
+ネットワークトラフィックの監視やシェーピングの他に、サービスメッシュへの統合によって得られるもう一つのメリットがセキュリティの強化です。
 
-Although security features such as *traffic encryption* are by default applied in the mesh, other practices such as access rules on what is a service's visibility and who can access them are not applied by default. This can have a two-fold effect:
+メッシュ内では *トラフィックの暗号化* などのセキュリティ機能がデフォルトで適用されますが、どのサービスに可視性を持たせるか、誰がそれらにアクセスできるかといったアクセスルール（認可ポリシー）はデフォルトでは適用されません。これには次のような二面性があります。
 
-* Services that are bad actors deployed by 3rd party in the cluster can gain access to a sensitive service,
-* The amount of all possible destinations in a very large cluster can make the configuration of an `istio-proxy` sidecar very large, causing evictions and possible cluster instability.
+* クラスター内のサードパーティによってデプロイされた不正なサービスが、機密性の高いサービスにアクセスできてしまう可能性がある。
+* 非常に大規模なクラスターでは、すべての宛先の組み合わせによって `istio-proxy` サイドカーの構成が非常に肥大化し、ポッドの立ち退き（Eviction）やクラスターの不安定化を引き起こす可能性がある。
 
-In order to counter these possible issues, you can apply `AuthorizationPolicy` resources and visibility restrictions based on the principal (the service identification) included in the exchanged certificate.
+これらの潜在的な問題に対処するため、交換される証明書に含まれるプリンシパル（サービス識別情報）に基づいて、`AuthorizationPolicy` リソースと可視性の制限を適用することができます。
 
 [NOTE]
 ++++
@@ -361,10 +376,10 @@ In order to counter these possible issues, you can apply `AuthorizationPolicy` r
 </details>
 ++++
 
-
-First we are going to apply a https://istio.io/latest/docs/ops/best-practices/security/#use-default-deny-patterns[default deny all, window=_blank] policy to each project, which is considered a best practice. 
+まず、ベストプラクティスとされる「デフォルト拒否（Default Deny All）」ポリシーを各プロジェクトに適用します。
 
 [,sh,subs="attributes",role=execute]
+
 ----
 echo "apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
@@ -376,6 +391,7 @@ spec:
 ----
 
 [,sh,subs="attributes",role=execute]
+
 ----
 echo "apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
@@ -386,20 +402,20 @@ spec:
   {}" | oc apply -f -
 ----
 
-With these policies in place, all of services of the _Travel Booking_ application are now unable to communicate with eachother, as they no longer have permission to do so.
+これらのポリシーが適用されたことで、*Travel Booking* アプリケーションのすべてのサービスは通信する権限を失い、相互に通信できなくなります。
 
-Click on `Service Mesh -> Traffic Graph` and note all of the failures that now appear.
+`Service Mesh -> Traffic Graph` をクリックして、表示されるようになったすべての通信失敗（エラー）を確認します。
 
 image::rh1/221-traffic-graph-fail.png[link=self, window=blank, width="100%"]
 
-You can confirm the effect by accessing the https://{modernize_ocp_virt_username}-istio-gateway.{modernize_ocp_virt_apps_domain}/[Travel Booking Dashboard, window=_blank] which now fails to load, and returns a message: *RBAC: access denied*.
+https://{modernize_ocp_virt_username}-istio-gateway.{modernize_ocp_virt_apps_domain}/[Travel Booking Dashboard, window=_blank] にアクセスしてみると、ロードに失敗して *RBAC: access denied（RBAC: アクセスが拒否されました）* というメッセージが返ってくることで、この効果を確認できます。
 
 image::rh1/222-access-denied.png[link=self, window=blank, width="100%"]
 
-Now we will restore communication by applying 2 fine-grained `AuthorizationPolicy` resources which will allow communications between: 
+次に、2つのきめ細かな `AuthorizationPolicy` リソースを適用して通信を復元します。これにより、以下の間の通信が許可されます。
 
-* The `istio-gateway` *->* `control-vm`, 
-* From services in the *{user}-travel-portal* *->* to services in *{user}-travel-agency* and *{user}-travel-control*.
+* `istio-gateway` *->* `control-vm`
+* *{user}-travel-portal* 内のサービス *->* *{user}-travel-agency* および *{user}-travel-control* 内のサービス
 
 [,sh,subs="attributes",role=execute]
 ----
@@ -431,24 +447,24 @@ spec:
         principals: [\"cluster.local/ns/{modernize_ocp_virt_username}-travel-agency/sa/default\",\"cluster.local/ns/{modernize_ocp_virt_username}-travel-portal/sa/default\"]" | oc apply -f -
 ----
 
-Returning to `Service Mesh -> Traffic Graph` you should see that connectivity has been restored between the *{user}-travel-portal* and *{user}-travel-agency* projects.
+`Service Mesh -> Traffic Graph` に戻ると、*{user}-travel-portal* と *{user}-travel-agency* プロジェクトの間で通信が復元されていることが確認できます。
 
 image::rh1/223-traffic-restored.png[link=self, window=blank, width="100%"]
 
-After a short period you should also regain access to the https://{modernize_ocp_virt_username}-istio-gateway.{modernize_ocp_virt_apps_domain}/[Travel Booking Dashboard, window=_blank].
+しばらくすると、 https://{modernize_ocp_virt_username}-istio-gateway.{modernize_ocp_virt_apps_domain}/[Travel Booking Dashboard, window=_blank] へのアクセスも回復するはずです。
 
 image::rh1/224-dashboard-restored.png[link=self, window=blank, width="100%"]
 
-While this makes everything seem like it's back to normal, you may notice that communication between the `travel-control` and `travel-agency` services has been restricted with our new policy, as it is unnecessary and the applied `AuthorizationPolicy` rule does not permit it.
+新しいポリシーによって `travel-control` と `travel-agency` サービス間の通信は制限されたままになっていることに気づくかもしれません。これは不要な通信であり、適用された `AuthorizationPolicy` ルールでも許可されていないためです。
 
-You can verify this by executing the following command in the terminal:
+ターミナルで以下のコマンドを実行することで、これを確認できます。
 
 [,sh,subs="attributes",role=execute]
 ----
 oc -n {modernize_ocp_virt_username}-travel-control run toolbox --rm -it --image=registry.redhat.io/rhel9/toolbox --restart=Never -- curl -o - -I travels-vm.{modernize_ocp_virt_username}-travel-agency.svc.cluster.local:8000/travels/London
 ----
 
-You should receive a response that this operation is forbidden.
+この操作が禁止されているという応答（403 Forbidden）を受け取るはずです。
 
 [source,yaml,subs=attributes]
 ----
@@ -460,11 +476,10 @@ server: envoy
 x-envoy-upstream-service-time: 1
 ----
 
+== Summary（まとめ）
 
-== Summary
+モジュールの完了、*おめでとうございます！！*
 
-*Congratulations!!* on completing this module.
+このモジュールでは、*Travel Booking* のネームスペース、コンテナ、および VM をサービスメッシュに導入し、OpenShift Service Mesh が提供するすべての可視化（オブザーバビリティ）ツールを確認しました。これにより、サイドカーコンテナが、VM であるかコンテナであるかを問わず内部のアプリケーションコンポーネントを変更することなく、強化されたセキュリティ、トラフィックシェーピング、ネットワーク監視などの横断的な機能をいかに有効にできるかをご理解いただけたかと思います。
 
-In this module you have introduced the _Travel Booking_ namespaces, containers and VMs to a service mesh, reviewed all the observability tooling on offer from OpenShift Service Mesh and by now have an understanding of how sidecar containes enable cross-cutting features such as enhanced security, traffic shaping, and network monitoring, without altering the internal application components whether these are VMs or containers.
-
-In the next scenario you will be automating the delivery of these configurations so that they can be monitored and applied as your needs change in a declarative rather than imperative manner by using _OpenShift GitOps_.
+次のシナリオでは、これらの構成の配信を自動化し、要件の変化に応じて、命令的なアプローチではなく *OpenShift GitOps* を使用した宣言的な方法で監視および適用できるようにします。

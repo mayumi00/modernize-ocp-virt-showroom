@@ -12,23 +12,23 @@ include::vars.adoc[]
 [[value-prop]]
 == Value Prop（価値提案）
 
-=== Why use containers and virtualization together?（なぜコンテナと仮想化を一緒に使うのか？）
+=== なぜコンテナと仮想化を一緒に使うのか？
 
 * Red Hat OpenShift上でコンテナと仮想マシンを同時に実行することで、チームは独自のペースでモダナイズを進めることができます。既存のVMベースのワークロードを維持しながら、単一の一貫したプラットフォーム上で新しいクラウドネイティブ・アプリケーションを構築できます。
 
-=== Why use GitOps to deploy virtualized environments?（なぜ仮想化環境のデプロイにGitOpsを使うのか？）
+=== なぜ仮想化環境のデプロイにGitOpsを使うのか？
 
 * GitOpsとArgo CDを使用して仮想化環境をコードとして管理（IaC）することにより、チームはガバナンスと一貫性を維持し、プロビジョニングを加速させながら、デプロイやDay 2運用を大幅に簡素化できます。
 
-=== How does a Service Mesh affect the way my applications function?（サービスメッシュはアプリケーションの機能にどう影響するか？）
+=== サービスメッシュはアプリケーションの機能にどう影響するか？
 
 * サービスメッシュ（Service Mesh）であるIstioを使用することで、チームはOpenShift上のコンテナ型ワークロードとVM間でトラフィック管理、セキュリティ、可視性を一元的に制御できるようになり、統合されたハイブリッド・アプリケーション・プラットフォームが実現します。
 
-=== How can I extend operations at the user level for self-service?（ユーザーレベルの運用をセルフサービスへ拡張するには？）
+=== ユーザーレベルの運用をセルフサービスへ拡張するには？
 
 * KubernetesのRBAC（ロールベースアクセス制御）、テンプレート、および自動化を組み合わせることでセルフサービス化が可能になり、プラットフォームチームがガバナンスと制御を維持したまま、ユーザーはオンデマンドでVMやアプリケーションをプロビジョニングできるようになります。
 
-=== What are the benefits of multicloud operations with OpenShift Virtualization? （OpenShift Virtualizationによるマルチクラウド運用のメリットは？）
+=== OpenShift Virtualizationによるマルチクラウド運用のメリットは？
 
 * 仮想化を含むOpenShiftの機能とメリットは、データセンター内のベアメタル環境だけでなく、クラウド上でも同様に利用できます。これにより、お客様は真のハイブリッドクラウド・インフラストラクチャを構築し、コンテナかVMかを問わず、すべてのワークロードを必要な場所で実行できるようになります。
 

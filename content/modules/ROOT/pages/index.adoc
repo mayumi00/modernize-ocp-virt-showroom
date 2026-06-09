@@ -128,6 +128,7 @@ git clone {modernize_ocp_virt_repo}
 
 クローンしたディレクトリをリスト表示し、すべてのアセットが利用可能であることを確認します。
 
+[source,shell,role=execute]
 ----
 ls -la modernize-ocp-virt-workspace
 ----

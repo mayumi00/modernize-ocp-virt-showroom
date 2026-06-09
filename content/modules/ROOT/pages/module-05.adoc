@@ -1,18 +1,20 @@
+
 = Module 05: OpenShift Virtualization in the Cloud
 
 include::vars.adoc[]
 
 == Introduction
 
-By harnessing the power of Red Hat’s cloud partners, customers can benefit by extending their OpenShift Virtualization deployment in a truly hybrid environment. OpenShift Virtualization is supported across leading public cloud providers including: Amazon Web Services, Microsoft Azure, Google Cloud, IBM Cloud, and Oracle Cloud Infrastructure, giving customers flexibility to run their workloads where it makes the most sense for their organization. This module is primarily instructive, but includes both video demonstrations and interactive demos showcasing OpenShift Virtualization running across these cloud platforms. 
- Cloud availability plays a key role in modernization by enabling organization to migrate, modernize, and operate virtual machines alongside cloud-native applications on a single, consistent platform.By extending their virtualization workloads to the cloud provider of choice, customers can address many of the challenges that initially drive adoption, including the need for elastic scale, faster provisioning, and simplified operations through unified management and joint support. 
+Red Hatのクラウドパートナーの力を活用することで、お客様は真のハイブリッド環境へOpenShift Virtualizationのデプロイを拡張できます。OpenShift Virtualizationは、Amazon Web Services（AWS）、Microsoft Azure、Google Cloud、IBM Cloud、およびOracle Cloud Infrastructureを含む主要なパブリッククラウドプロバイダーでサポートされており、組織にとって最も合理的な場所でワークロードを実行できる柔軟性を提供します。
 
-Running OpenShift Virtualization on cloud infrastructure also supports cost optimization strategies by allowing customers to right-size resources, take advantage of flexible consumption and committed spend models, and reduce the overhead associated with maintaining on-premises hardware.See the sections below to learn more about each of the cloud providers that we partner with, and how they support OpenShift Virtualization.
+このモジュールは主に座学（解説）中心ですが、これらのクラウドプラットフォーム上で動作するOpenShift Virtualizationを紹介するビデオデモやインタラクティブデモが含まれています。 +
+クラウドでの利用可能性は、単一の一貫したプラットフォーム上で、クラウドネイティブ・アプリケーションと並行して仮想マシンを移行、モダナイズ、および運用できるようにすることで、モダナイゼーションにおいて重要な役割を果たします。仮想化ワークロードを選択したクラウドプロバイダーに拡張することで、お客様は、弾力的なスケール（伸縮性）、迅速なプロビジョニング、および一元化された管理と共同サポートによる運用の簡素化など、最初の導入動機となった多くの課題に対処できます。
 
+また、クラウドインフラストラクチャ上でOpenShift Virtualizationを実行することは、リソースの最適化（ライトサイジング）、柔軟な利用モデルやコミットメントベースの料金モデルの活用、オンプレミスハードウェアの維持に伴うオーバーヘッドの削減を可能にし、コスト最適化戦略をサポートします。私たちが提携している各クラウドプロバイダーの詳細、およびそれらがどのようにOpenShift Virtualizationをサポートしているかについては、以下のセクションを参照してください。
 
 == Amazon Web Services
 
-Red Hat OpenShift Virtualization is *Generally Available* in both self-managed Red Hat OpenShift, and fully-managed https://www.redhat.com/en/technologies/cloud-computing/openshift/aws[Red Hat OpenShift on AWS (ROSA)^] clusters in Amazon Web Services, simply by installing the Virtualization Operator, and adding bare metal compute nodes to your cluster.
+Red Hat OpenShift Virtualizationは、Amazon Web Services（AWS）における自主管理型のRed Hat OpenShift、および完全管理型の https://www.redhat.com/en/technologies/cloud-computing/openshift/aws[Red Hat OpenShift on AWS (ROSA)^] クラスターの双方で *一般利用可能（Generally Available: GA）* になっています。Virtualization Operatorをインストールし、クラスターにベアメタルのコンピュートノードを追加するだけで簡単に利用できます。
 
 *Video Demo: Configuring a ROSA cluster to run OpenShift Virtualization*
 
@@ -35,22 +37,19 @@ Red Hat OpenShift Virtualization is *Generally Available* in both self-managed R
 
 == Google Cloud
 
-Red Hat OpenShift Virtualization is now available as a *Technology Preview* in https://www.redhat.com/en/blog/red-hat-openshift-virtualization-google-cloud[Google Cloud^] as a part of https://www.redhat.com/en/technologies/cloud-computing/openshift/dedicated[Red Hat OpenShift Dedicated^]:
+Red Hat OpenShift Virtualizationは、 https://www.redhat.com/en/blog/red-hat-openshift-virtualization-google-cloud[Google Cloud^]  で現在 *テクノロジープレビュー（Technology Preview）* として利用可能です。
 
-*Arcade Interactive Demo: Deploy Virtual Machines in OpenShift Virtualization on Red Hat OpenShift Dedicated*
- 
 ++++
 <!--ARCADE EMBED START--><div style="position: relative; padding-bottom: calc(60.8805% + 41px); height: 0px; width: 100%;"><iframe src="https://demo.arcade.software/HleIaKgn1Iuf9SrJSt3S?embed&embed_mobile=tab&embed_desktop=inline&show_copy_link=true" title="Deploy Virtual Machines in OpenShift Virtualization on Red Hat OpenShift Dedicated" frameborder="0" loading="lazy" webkitallowfullscreen mozallowfullscreen allowfullscreen allow="clipboard-write" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; color-scheme: light;" ></iframe></div><!--ARCADE EMBED END-->
 ++++
 
 == IBM Cloud
 
-Red Hat OpenShift Virtualization is now *Generally Available* in https://www.ibm.com/new/announcements/red-hat-openshift-virtualization-is-now-available-on-ibm-cloud2[IBM Cloud^]
-
+Red Hat OpenShift Virtualizationは、 https://www.ibm.com/new/announcements/red-hat-openshift-virtualization-is-now-available-on-ibm-cloud2[IBM Cloud^] でも *一般利用可能（Generally Available: GA）* になりました。
 
 == Microsoft Azure
 
-Red Hat OpenShift Virtualization is now *Generally Available* on https://learn.microsoft.com/en-us/azure/openshift/howto-create-openshift-virtualization[Microsoft Azure^], as a part of the https://www.redhat.com/en/technologies/cloud-computing/openshift/azure[Azure Red Hat OpenShift (ARO)^] fully-managed solution.
+Red Hat OpenShift Virtualizationは、完全管理型ソリューションである https://www.redhat.com/en/technologies/cloud-computing/openshift/azure[Azure Red Hat OpenShift (ARO)^] の一部として、 https://learn.microsoft.com/en-us/azure/openshift/howto-create-openshift-virtualization[Microsoft Azure^] でも *一般利用可能（Generally Available: GA）* になりました。
 
 *Arcade Interactive Demo: Azure Red Hat OpenShift Virtualization Demo*
 
@@ -66,9 +65,10 @@ Red Hat OpenShift Virtualization is now *Generally Available* on https://learn.m
 
 == Oracle Cloud
 
-Red Hat OpenShift Virtualization is now *Generally Available* on https://blogs.oracle.com/cloud-infrastructure/red-hat-openshift-virtualization-available-on-oci[Oracle Cloud^].
-
+Red Hat OpenShift Virtualizationは、 https://blogs.oracle.com/cloud-infrastructure/red-hat-openshift-virtualization-available-on-oci[Oracle Cloud^] でも *一般利用可能（Generally Available: GA）* になりました。
 
 == Conclusion
 
-Having Red Hat OpenShift Virtualization available in our cloud partner environments allows for our customers to extend their datacenters into a fully hybrid scenario for both Virtual Machines and Containers. This enables resilient applications and redundant infrastructures across multiple regions and availability zones to ensure that services are always available. Red Hat OpenShift Cloud Services further modernizes operations by simplifying deployment and management, helping customers get up and running faster with less operational overhead.
+クラウドパートナー環境でRed Hat OpenShift Virtualizationを利用できるようになったことで、お客様はデータセンターを仮想マシンとコンテナの双方に対応した完全なハイブリッドシナリオへと拡張できます。これにより、複数のリージョンやアベイラビリティゾーンにまたがる耐障害性の高いアプリケーションや冗長インフラストラクチャを実現し、サービスを常に利用可能な状態に保つことができます。
+
+さらに、Red Hat OpenShift Cloud Servicesは、デプロイと管理を簡素化することで運用をモダンに進化させ、お客様がより少ない運用オーバーヘッドで迅速に立ち上げ、実行できるように支援します。

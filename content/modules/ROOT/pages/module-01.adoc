@@ -80,13 +80,13 @@ image::rh1/09b-cars-vm-dashboard-cpumem.png[link="self", window=blank, width="10
 
 image::rh1/09c-cars-vm-dashboard-stornet.png[link="self", window=blank, width="100%"]
 
-`Virtualization（仮想化） -> VirtualMachines（仮想マシン）` をクリックして仮想マシンの概要に戻り、もう一度 `cars-vm` をクリックしてから `Configuration（構成）` タブをクリックすると、VM上で変更可能な構成オプションを詳しく確認できます。
+`Virtualization（仮想化） -> VirtualMachines（仮想マシン）` をクリックして仮想マシンの概要に戻り、もう一度 `cars-vm` をクリックしてから `Configuration（設定）` タブをクリックすると、VM上で変更可能な構成オプションを詳しく確認できます。
 
 これにより、変更可能なVMの構成オプションの概要が表示されます。これには、CPUとメモリのほか、サブメニューで利用可能なストレージ、ネットワーキング、およびスケジューリングのオプションが含まれます。これらのメニューをクリックして、利用可能な調整可能なオプションを確認してください。
 
 image::rh1/10-cars-vm-config.png[link="self", window=blank, width="100%"]
 
-この導入セクションでは、OpenShiftコンソールの仮想化ダッシュボードと、Metrics（メトリクス）、デフォルトのダッシュボード、および仮想マシンのConfiguration（構成）のサブタブについて探索しました。ここからは、仮想マシンの作成と操作を行うために、OpenShiftでの追加のタスクに進みます。
+この導入セクションでは、OpenShiftコンソールの仮想化ダッシュボードと、Metrics（メトリクス）、デフォルトのダッシュボード、および仮想マシンのConfiguration（設定）のサブタブについて探索しました。ここからは、仮想マシンの作成と操作を行うために、OpenShiftでの追加のタスクに進みます。
 
 [[quick-create-vm]]
 == Quick Create a Virtual Machine
@@ -106,7 +106,7 @@ image::rh1/12-create-project-window.png[link="self", window=blank, width="100%"]
 このガイド内の画像は、それらがキャプチャされた特定のユーザーのものとして静的に表示されますが、指示テキストはお使いの特定のユーザーアカウントに応じて動的に変わります。必ず指定されたご自身のユーザーとして作成を行ってください。
 ====
 
-プロジェクトが作成されると、その新しいプロジェクトに自動的に移動します。中央にある `Create VirtualMachine（仮想マシンの作成）` ボタンをクリックし、ドロップダウンメニューから `From template（テンプレートから）` を選択して、仮想マシンを作成します。
+プロジェクトが作成されると、その新しいプロジェクトに自動的に移動します。中央にある `Create VirtualMachine（VirtualMachineの作成）` ボタンをクリックし、ドロップダウンメニューから `From template（テンプレートから）` を選択して、仮想マシンを作成します。
 
 image::rh1/13-create-vm-button.png[link="self", window=blank, width="100%"]
 
@@ -114,7 +114,7 @@ image::rh1/13-create-vm-button.png[link="self", window=blank, width="100%"]
 
 image::rh1/14-template-catalog.png[link="self", window=blank, width="100%"]
 
-新しいウィンドウが表示され、ブート可能なCDイメージなどの設定、VMのディスクサイズの変更、CPUやメモリリソースの構成、およびVMの名前の設定が行えます。この演習の目的としては、仮想マシンの名前に `{user}-rhel9` と入力し、下部にある `Quick create VirtualMachine（仮想マシンのクイック作成）` ボタンをクリックするだけで構いません。
+新しいウィンドウが表示され、ブート可能なCDイメージなどの設定、VMのディスクサイズの変更、CPUやメモリリソースの構成、およびVMの名前の設定が行えます。この演習の目的としては、仮想マシンの名前に `{user}-rhel9` と入力し、下部にある `Quick create VirtualMachine（VirtualMachineのクイック作成）` ボタンをクリックするだけで構いません。
 
 image::rh1/15-quick-create-vm.png[link="self", window=blank, width="100%"]
 
@@ -129,7 +129,7 @@ image::rh1/17-quick-create-vm-console.png[link="self", window=blank, width="100%
 [[lightspeed-intro]]
 == Introduction to OpenShift Lightspeed
 
-ご存じない方のために説明すると、[https://www.redhat.com/en/technologies/cloud-computing/openshift/lightspeed](https://www.redhat.com/en/technologies/cloud-computing/openshift/lightspeed)[OpenShift Lightspeed] は、Red Hat OpenShiftのWebコンソールに直接統合された、生成AIを搭載したアシスタントです。質問への回答、コマンドの提案、自然言語によるYAML構成の分析を通じて、ユーザーによるトラブルシューティング、理解、およびOpenShiftクラスターの管理を支援し、適切なサポートのために様々な大規模言語モデル（LLM）と連携します。 +
+ご存じない方のために説明すると、 https://www.redhat.com/en/technologies/cloud-computing/openshift/lightspeed[OpenShift Lightspeed^]  は、Red Hat OpenShiftのWebコンソールに直接統合された、生成AIを搭載したアシスタントです。質問への回答、コマンドの提案、自然言語によるYAML構成の分析を通じて、ユーザーによるトラブルシューティング、理解、およびOpenShiftクラスターの管理を支援し、適切なサポートのために様々な大規模言語モデル（LLM）と連携します。 +
 
 このモジュールの残りの部分では、OpenShift Lightspeedを活用して、情報収集からリソースの作成やトラブルシューティングにいたるまで、クラスター内でのいくつかのタスクを実行します。
 
@@ -301,19 +301,19 @@ image::rh1/33-lightspeed-vm-console.png[link="self", window=blank, width="100%"]
 
 image::rh1/34-create-vm-from-template.png[link="self", window=blank, width="100%"]
 
-`Create new VirtualMachine（新規仮想マシンの作成）` ページで、Fedora VMのタイルを選択します。
+`Create new VirtualMachine（新しい VirtualMachine の作成）` ページで、Fedora VMのタイルを選択します。
 
 image::rh1/35-fedora-tile.png[link="self", window=blank, width="100%"]
 
-When the Fedora VM dialog appears, name your virtual machine `fedora-broken` and click the button to `Customize VirtualMachine（仮想マシンのカスタマイズ）`.
+Fedora VMのダイアログが表示されたら、仮想マシンの名前に fedora-broken と入力し、Customize VirtualMachine（仮VirtualMachineのカスタマイズ） ボタンをクリックします
 
 image::rh1/36-customize-vm.png[link="self", window=blank, width="100%"]
 
-`Customize and create VirtualMachine（仮想マシンのカスタマイズと作成）` ページで、`Disks（ディスク）` のタブをクリックし、デフォルトの rootdisk の横にある `3つのドット` のメニューをクリックして `Edit（編集）` オプションを選択します。
+`Customize and create VirtualMachine（VirtualMachine のカスタマイズと作成）` ページで、`Disks（ディスク）` のタブをクリックし、デフォルトの rootdisk の横にある `3つのドット` のメニューをクリックして `Edit（編集）` オプションを選択します。
 
 image::rh1/37-edit-disk.png[link="self", window=blank, width="100%"]
 
-`Edit disk（ディスクの編集）` ダイアログが表示されたら、ディスクサイズを *10GB* に変更します。これは、VMを正しくプロビジョニングするには小さすぎるサイズです。ダイアログの `Save（保存）` ボタンをクリックし、メイン画面に戻ったら `Create VirtualMachine（仮想マシンの作成）` ボタンをクリックします。
+`Edit disk（ディスクの編集）` ダイアログが表示されたら、ディスクサイズを *10GB* に変更します。これは、VMを正しくプロビジョニングするには小さすぎるサイズです。ダイアログの `Save（保存）` ボタンをクリックし、メイン画面に戻ったら `Create VirtualMachine（VirtualMachineの作成）` ボタンをクリックします。
 
 image::rh1/38-edit-disk-small.png[link="self", window=blank, width="100%"]
 

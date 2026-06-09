@@ -1,114 +1,116 @@
+
 = Module 03: Declarative Management of VMs with GitOps Automation
 
 include::vars.adoc[]
 
-GitOps is a modern approach to infrastructure and application management that leverages Git as the single source of truth for declarative system configurations. 
+GitOpsは、宣言的なシステム構成の「唯一の真実のソース（Single Source of Truth）」としてGitを使用する、インフラストラクチャおよびアプリケーション管理へのモダンなアプローチです。
 
-By using Git repositories to define and manage infrastructure, GitOps enables automated deployment, version control, and continuous delivery. Changes are made through pull requests, ensuring consistency, auditability, and rollback capabilities. This approach improves collaboration among teams while reducing human errors.
+Gitリポジトリを使用してインフラストラクチャを定義・管理することで、GitOpsは自動デプロイ、バージョン管理、および継続的デリバリー（CD）を可能にします。変更はプルリクエスト（Pull Request）を通じて行われるため、一貫性、監査可能性、およびロールバック機能が保証されます。このアプローチにより、チーム間のコラボレーションが向上すると同時に、ヒューマンエラーが削減されます。
 
 image::rh1/400-gitops-architecture.png[link="self", window=blank, width="100%"]
 
+== Objectives（目的）
 
-== Objectives
-
-* Introduction of GitOps
-* Understanding OpenShift GitOps for Virtual Machines
-* Configure and manage the `travel-control` domain with GitOps
-
+* GitOps の導入
+* 仮想マシンにおける OpenShift GitOps の理解
+* GitOps を使用した `travel-control` ドメインの構成と管理
 
 [[about-gitops]]
 == About OpenShift GitOps
 
-OpenShift GitOps, based on *Argo CD*, extends GitOps principles to Red Hat OpenShift environments, offering a robust solution for managing Kubernetes-native applications and virtualized workloads.
+*Argo CD* をベースにした OpenShift GitOps は、GitOpsの原則をRed Hat OpenShift環境に拡張し、Kubernetesネイティブなアプリケーションや仮想化されたワークロードを管理するための包括的なソリューションを提供します。
 
-Red Hat OpenShift GitOps is an operator that provides a workflow that integrates git repositories, continuous integration/continuous delivery (CI/CD) tools, and Kubernetes to realize faster, more secure, scalable software development, without compromising quality.
+Red Hat OpenShift GitOpsは、Gitリポジトリ、継続的インテグレーション/継続的デリバリー（CI/CD）ツール、およびKubernetesを統合したワークフローを提供するオペレーターであり、品質を妥協することなく、より迅速で安全、かつスケーラブルなソフトウェア開発を実現します。
 
-OpenShift GitOps enables customers to build and integrate declarative git driven CD workflows directly into their application development platform.
+OpenShift GitOpsにより、ユーザーは宣言的なGit駆動のCDワークフローをアプリケーション開発プラットフォームに直接構築し、統合することができます。
 
-There’s no single tool that converts a development pipeline to "DevOps". By implementing a GitOps framework, updates and changes are pushed through declarative code, automating infrastructure and deployment requirements, and CI/CD.
+開発パイプラインを「DevOps」へと変換する単一のツールというものは存在しません。GitOpsフレームワークを実装することで、アップデートや変更が宣言的なコードを通じてプッシュされ、インフラストラクチャやデプロイ要件、およびCI/CDが自動化されます。
 
+=== Benefits of OpenShift GitOps for Virtual Machines (VMs)（仮想マシンにおけるOpenShift GitOpsのメリット）
 
-=== Benefits of OpenShift GitOps for Virtual Machines (VMs)
+GitOpsは通常、コンテナ化されたアプリケーションに関連付けられますが、OpenShift GitOpsはOpenShift Virtualizationを使用した *仮想マシン（VM）の管理もサポート* しています。これにはいくつかの大きな利点があります。
 
-While GitOps is typically associated with containerized applications, OpenShift GitOps also *supports managing Virtual Machines (VMs)* using OpenShift Virtualization. This provides several key advantages:
+* *一貫した Infrastructure as Code (IaC)*: VMの構成とライフサイクルをGitで管理することにより、チームはKubernetesアプリケーションに使用されるものと同じ宣言的ワークフローを適用でき、一貫性と再現性を確保できます。
+* *自動化されたデプロイとロールバック*: OpenShift GitOpsは、Git内の期待される状態（Desired State）を継続的に監視し、乖離を自動的に調整（リコンサイル）します。これにより、VMが常に正しくデプロイされ、必要に応じて迅速なロールバックが可能になります。
+* *セキュリティとコンプライアンスの向上*: Gitベースのワークフローにより、監査可能な変更管理が可能になり、ポリシーやコンプライアンス基準を強制しながら、VM構成に対するすべての変更を追跡およびレビューできます。
+* *拡張性とハイブリッドクラウドのサポート*: OpenShift GitOpsは、オンプレミス環境とクラウド環境にまたがるVMのデプロイと管理を容易にし、インフラストラクチャ自動化への統一されたアプローチを提供します。
 
-* *Consistent Infrastructure as Code (IaC)*: By managing VM configurations and lifecycle in Git, teams can apply the same declarative workflows used for Kubernetes applications, ensuring consistency and repeatability.
-
-* *Automated Deployments and Rollbacks*: OpenShift GitOps continuously monitors the desired state in Git and automatically reconciles deviations. This ensures VMs are always deployed correctly and allows quick rollbacks if needed.
-
-* *Improved Security and Compliance*: Git-based workflows enable auditable change management, allowing teams to track and review all modifications to VM configurations while enforcing policies and compliance standards.
-
-* *Scalability and Hybrid Cloud Support*: OpenShift GitOps facilitates deploying and managing VMs across on-premises and cloud environments, providing a unified approach to infrastructure automation.
-
-By integrating GitOps principles with OpenShift Virtualization, organizations can streamline VM management, enhance security, and improve operational efficiency in hybrid cloud environments.
-
+GitOpsの原則をOpenShift Virtualizationと統合することで、組織はVM管理を合理化し、セキュリティを強化し、ハイブリッドクラウド環境における運用効率を向上させることができます。
 
 ==  Getting Started
 
-NOTE: All assets for this module are in the folder `module-03`. Please change the directory into this folder.
+[NOTE]
+====
+このモジュール用のすべてのアセットは `module-03` フォルダにあります。ここでそのディレクトリに移動してください。
+====
 
 [,sh,subs="attributes",role=execute]
 ----
 cd $HOME/modernize-ocp-virt-workspace/module-03
 ----
 
-In this module we want to deploy everything declaratively and let it be managed by OpenShift GitOps. 
+このモジュールでは、すべてを宣言的にデプロイし、OpenShift GitOpsによって管理させたいと考えています。
 
-This is a very different approach than in earlier modules where we created a VM manually using either the console or a simple YAML manifest.
-
+これは、コンソールかシンプルなYAMLマニフェストのいずれかを使用して手動でVMを作成した前のモジュールとは大きく異なるアプローチです。
 
 [[argo-login]]
 == Log Into the User's Argo CD Deployment
 
-First, we are going to open the OpenShift GitOps Dashboard.
+まず、OpenShift GitOpsダッシュボードを開きます。
 
-While our OpenShift deployment has a cluster-scoped Argo CD deployment that is used by the Red Hat Demo Platform team to manage the environment, such as pre-deploying the VMs that were available when we started, we will be using a user-scoped installation of Argo CD in order to perform the tasks in this module.
+お使いのOpenShift環境には、Red Hat Demo Platformチームが環境管理（開始時に利用可能だったVMの事前デプロイなど）に使用しているクラスター規模（cluster-scoped）のArgo CDが導入されていますが、このモジュールのタスクを実行するためには、ユーザー規模（user-scoped）の独立したArgo CDのインスタンスを使用します。
 
-This cluster-scoped Argo CD deployment can be accessed through the _applications_ menu at the top of the page and by selecting `Cluster Argo CD` from the drop down menu.
+クラスター規模のArgo CDデプロイメントには、ページ上部の「アプリケーション（アプリケーションランチャー）」メニューから `Cluster Argo CD` を選択することでアクセスできます。
 
 image::rh1/401-cluster-scoped-argocd.png[link="self", window=blank, width="100%"]
 
-IMPORTANT: The {user} account does not have permissions to perform operations here, instead we will be opening our user-scoped Argo CD deployment found in the {user}-travel-control-new project.
+[IMPORTANT]
+====
+管理者アカウントではないため、 `{user}` アカウントにはここでの操作権限がありません。代わりに、`{user}-travel-control-new` プロジェクト内に用意されているユーザー規模のArgo CDデプロイメントを開きます。
+====
 
-To do this we need to visit the `Networking -> Routes` menu. Select the `{user}-travel-control-new` project from the dropdown and we should see one route available to us for *argocd-server*. 
+これを行うには、左側メニューの `Networking（ネットワーク） -> Routes（ルート）` に移動します。ドロップダウンから `{user}-travel-control-new` プロジェクトを選択すると、*argocd-server* のルートが1つ利用可能になっていることが確認できます。
 
-Click on the route hyperlink to open the the Argo CD console.
+ルートのハイパーリンクをクリックして、Argo CDコンソールを開きます。
 
 image::rh1/402-user-scoped-argocd.png[link="self", window=blank, width="100%"]
 
-This will bring up the Argo CD console in a new tab.
+新しいタブでArgo CDコンソールが起動します。
 
-Click on the `LOG IN VIA OPENSHIFT` button, it should automatically log you in. If it doesn't just make use of your current user credentials.
+`LOG IN VIA OPENSHIFT` ボタンをクリックすると、自動的にログインするはずです。自動ログインされない場合は、現在のユーザーの資格情報を使用してください。
 
 image::rh1/403-argo-login-oauth.png[link="self", window=blank, width="100%"]
 
-=== Welcome to the Argo Dashboard!
+=== Welcome to the Argo Dashboard!（Argoダッシュボードへようこそ！）
 
-You will see that currently there are no Argo applications running or being managed by OpenShift GitOps.
+現在はOpenShift GitOpsによって実行または管理されているArgoアプリケーションがないことが確認できます。
 
 image::rh1/404-argo-dashboard.png[link="self", window=blank, width="100%"]
-
 
 [[create-argo-app]]
 == Create an Argo CD Application
 
-Now that we've logged into Argo CD, let us create an app for the `travel-control` components.
+Argo CDにログインしましたので、`travel-control` コンポーネント用のアプリケーション（App）を作成してみましょう。
 
-An *Argo CD application* is a Kubernetes resource that defines and manages the deployment of workloads based on a Git repository. It continuously syncs the desired application state from Git to the cluster, ensuring consistency and enabling automated rollbacks if deviations occur.
+*Argo CDアプリケーション* とは、Gitリポジトリに基づいてワークロードのデプロイを定義および管理するKubernetesリソースです。アプリケーションの期待される状態をGitからクラスターへと継続的に同期し、一貫性を確保するとともに、乖離が発生した場合には自動ロールバックを可能にします。
 
-In the Argo console we can create a new application by either clicking on the `+ New App` button on the top left, or the `Create Application` button in the middle:
+Argoコンソールでは、左上の `+ New App` ボタン、または中央の `Create Application` ボタンのいずれかをクリックして、新しいアプリケーションを作成できます。
 
 image::rh1/405-argo-newapp.png[link="self", window=blank, width="100%"]
 
-When we do this the Create App wizard slides out.
+クリックすると、アプリケーション作成（Create App）ウィザードがスライドして表示されます。
 
-NOTE: The wizard has a number of fields to fill out, so we are going to step through the screenshots one at a time.
+[NOTE]
+====
+ウィザードには入力が必要なフィールドがいくつかあるため、スクリーンショットに沿って一つずつ手順を進めていきます。
+====
 
-In the *General* section, give your app the name `travel-control`, use the argo project `default`, and leave the sync policy as `Manual`:
+*General（全般）* セクションで、アプリケーション名に `travel-control` と入力し、argoプロジェクトには `default` を使用し、同期ポリシー（Sync Policy）は `Manual（手動）` のままにします。
 
 image::rh1/406-argo-newapp-general.png[link="self", window=blank, width="100%"]
 
-In the *SOURCE* section, copy and paste the repo to Argo CD by setting repository url to the github repo url, leave revision as `HEAD`, and set the path to `module-03/travel-control`:
+*SOURCE（ソース）* セクションで、リポジトリURL（Repository URL）にGitHubのリポジトリURLを設定してGitリポジトリをArgo CDに紐付け、リビジョン（Revision）は `HEAD` のままにし、パス（Path）を `module-03/travel-control` に設定します。
+
 
 [,sh,subs="attributes",role=execute]
 ----
@@ -117,10 +119,12 @@ In the *SOURCE* section, copy and paste the repo to Argo CD by setting repositor
 
 image::rh1/407-argo-newapp-source.png[link="self", window=blank, width="100%"]
 
-NOTE: We have already provided all necessary Kubernetes manifests in this `repository` and `path`. Feel free to explore this Helm Chart if you like. 
+[NOTE]
+====
+この `リポジトリ（repository）` と `パス（path）` には、必要なすべてのKubernetesマニフェストがすでに用意されています。ご興味があれば、このHelmチャートの内容を自由に探索してください。
+====
 
-
-In the *Destination* section, set cluster URL to https://kubernetes.default.svc by copying and pasting the value below, and leave the namespace empty:
+*Destination（宛先）* セクションで、以下の値をコピーして貼り付けることで、クラスターURL（Cluster URL）を `https://kubernetes.default.svc` に設定し、ネームスペース（Namespace）は空のままにします。
 
 [,sh,subs="attributes",role=execute]
 ----
@@ -129,8 +133,7 @@ https://kubernetes.default.svc
 
 image::rh1/408-argo-newapp-destination.png[link="self", window=blank, width="100%"]
 
-
-In the *Helm* section, provide the username and URL of the Service Mesh ingress gateway by overwriting the `username` and `ossm_ingress` parameters:
+*Helm* セクションで、`username` と `ossm_ingress` パラメーターを上書きして、ユーザー名とService MeshのIngress GatewayのURLを入力します。
 
 [,sh,subs="attributes",role=execute]
 ----
@@ -139,113 +142,113 @@ In the *Helm* section, provide the username and URL of the Service Mesh ingress 
 
 image::rh1/409-argo-newapp-helm.png[link="self", window=blank, width="100%"]
 
-After filling out the information above, click Create at the top of the UI to create the `travel-control` application:
+上記の情報をすべて入力したら、UIの上部にある *Create（作成）* をクリックして `travel-control` アプリケーションを作成します。
 
 image::rh1/410-argo-newapp-create.png[link="self", window=blank, width="100%"]
 
-You will return to the main Argo dashboard, where you can see that the `travel-control` argo application is created, and you can now view its status, which notably is in an OutOfSync state since the application is staged, but has yet to be deployed, and no resources have been created as of yet in our OpenShift cluster.
+メインのArgoダッシュボードに戻ると、`travel-control` argoアプリケーションが作成されていることが確認できます。そのステータスを表示できますが、アプリケーションがステージングされただけでまだデプロイされておらず、OpenShiftクラスター内にはまだリソースが作成されていないため、特に `OutOfSync（同期が不一致）` 状態になっていることがわかります。
 
 image::rh1/411-argo-newapp-status.png[link="self", window=blank, width="100%"]
 
-To sync (deploy) the application, you simply have to click on the `SYNC` button of the `travel-control` application
+アプリケーションを同期（デプロイ）するには、`travel-control` アプリケーションの `SYNC` ボタンをクリックするだけです。
 
 image::rh1/412-argo-newapp-sync-button.png[link="self", window=blank, width="100%"]
 
-A new panel will be opened and then, click on `SYNCHRONIZE` button.
+新しいパネルが開きますので、`SYNCHRONIZE` ボタンをクリックします。
 
 image::rh1/413-argo-newapp-synchronize-button.png[link="self", window=blank, width="100%"]
 
-The panel will close and you will see the `travel-control` application begin to deploy and apply configuration changes.
+パネルが閉じ、`travel-control` アプリケーションのデプロイと構成変更の適用が開始されるのが確認できます。
 
 image::rh1/414-argo-newapp-application-working.png[link="self", window=blank, width="100%"]
 
-By clicking on the `travel-control` application you open the details of the app, and you'll see which resources have been applied, as well as the Sync status, last sync and application health.
+`travel-control` アプリケーションをクリックすると、アプリケーションの詳細が開きます。どの子リソースが適用されたか、また同期ステータス、最終同期、およびアプリケーションのヘルス状態（Health）を確認できます。
 
 image::rh1/415-argo-newapp-application-details.png[link="self", window=blank, width="100%"]
 
-Wait for a few minutes until everything is up and running.
+すべてが起動して実行中になるまで、数分待ちます。
 
-In the last step we test if the whole solution is working correctly, by opening the *Business Dashboard* of the _Booking Application_ again. 
+最後のステップとして、*Booking Application（予約アプリケーション）* のビジネスダッシュボードを再度開いて、ソリューション全体が正常に動作しているかテストします。 +
 
-Click on the following link: https://{modernize_ocp_virt_username}-ingress-istio-gateway.{modernize_ocp_virt_apps_domain}[Travel Control Dashboard^]
+以下のリンクをクリックしてください： https://{modernize_ocp_virt_username}-ingress-istio-gateway.{modernize_ocp_virt_apps_domain}[Travel Control Dashboard^]
 
-image::rh1/416-argo-newapp-application-verified.png[link="self", window=blank, width="100%"] 
+image::rh1/416-argo-newapp-application-verified.png[link="self", window=blank, width="100%"]
 
-We can see that we've deployed a full application using both virtual machines and containers using Red Hat OpenShift GitOps.
+Red Hat OpenShift GitOpsを使用して、仮想マシンとコンテナの両方を組み合わせた完全なアプリケーションを正常にデプロイできたことが確認できます。
 
 [[argo-self-heal]]
 == Validate Argo CD Self-Healing
 
-To test Argo CD’s **self-healing capability**, you can manually delete a Kubernetes resource managed by Argo CD. With **Automated Sync** and **Self-Heal** enabled, Argo CD will detect the drift from the desired Git state and automatically **recreate the deleted resource**, confirming that self-healing is working as expected.
+Argo CDの *セルフヒーリング（Self-healing）能力* をテストするために、Argo CDによって管理されているKubernetesリソースを手動で削除してみましょう。*Automated Sync（自動同期）* と *Self-Heal（セルフヒーリング）* を有効にすると、Argo CDはGit内の期待される状態（Desired State）からの乖離（ドリフト）を検出し、*削除されたリソースを自動的に再作成* します。これにより、セルフヒーリングが期待通りに動作していることを確認できます。
 
+=== Enable Self-Healing（セルフヒーリングの有効化）
 
-=== Enable Self-Healing
+まず、travel-control アプリケーションの `Auto-Sync` と `Self-Healing` を有効にする必要があります。
 
-First, we need to enable `Auto-Sync` and `Self-Healing` for the travel-control application.
-
-Click on the `DETAILS` button at the top of the `travel-control` application.
+`travel-control` アプリケーションの上部にある `DETAILS` ボタンをクリックします。
 
 image::rh1/417-travel-control-details-button.png[link="self", window=blank, width="100%"]
 
-A panel will slide out, scroll down to the *Sync Policy* section, and click on the `ENABLE AUTO-SYNC` button.
+パネルがスライドして表示されます。*Sync Policy* セクションまで下にスクロールし、`ENABLE AUTO-SYNC` ボタンをクリックします。
 
 image::rh1/418-travel-control-autosync-button.png[link="self", window=blank, width="100%"]
 
-A new window will appear for `Enable Auto-Sync`, click on the `OK` button.
+`Enable Auto-Sync` の新しいウィンドウが表示されたら、`OK` ボタンをクリックします。
 
 image::rh1/419-travel-control-autosync-ok.png[link="self", window=blank, width="100%"]
 
-With `Auto-Sync` enabled, the *Sync Policy* section changes to include an option for `Self Heal` with a button next to it for `Enable`. Click that button.
+`Auto-Sync` が有効になると、*Sync Policy* セクションが変更され、隣に `Enable` ボタンが付いた `Self Heal` のオプションが表示されます。そのボタンをクリックしてください。
 
 image::rh1/420-travel-control-sync-policy.png[link="self", window=blank, width="100%"]
 
-A new window will appear for `Enable Self Heal`, click on the `OK` button.
+`Enable Self Heal` の新しいウィンドウが表示されたら、`OK` ボタンをクリックします。
 
 image::rh1/421-travel-control-selfheal-ok.png[link="self", window=blank, width="100%"]
 
-Close the panel by clicking on the `X` in the upper right corner.
+右上隅の `X` をクリックしてパネルを閉じます。
 
 image::rh1/422-travel-control-details-close.png[link="self", window=blank, width="100%"]
 
+=== Test Self-Healing（セルフヒーリングのテスト）
 
-=== Test Self-Healing
+セルフヒーリング機能をテストするために、`{user}-travel-control-new` プロジェクトから *control-vm* を「誤って」削除してみます。
 
-In order to test out the self-healing feature, we are going to "accidentally" delete our *control-vm* from our *{user}-travel-control-new* project. 
-
-Return to your Red Hat OpenShift Console, and click on `Virtualization -> VirtualMachines` in the left side navigation menu, followed by the *{user}-travel-control-new* project in the center column, and the virtual machine named *control-vm*.
+Red Hat OpenShiftコンソールに戻り、左側のナビゲーションメニューで `Virtualization（仮想化） -> VirtualMachines（仮想マシン）` をクリックし、中央の列で `{user}-travel-control-new` プロジェクトを選択してから、*control-vm* という名前の仮想マシンをクリックします。
 
 image::rh1/423-virt-console-control-vm.png[link="self", window=blank, width="100%"]
 
-IMPORTANT: You will need to perform these next few tasks fairly quickly, or the VM may automatically restart due to Argo CD protecting the VM's desired running state.
+[IMPORTANT]
+====
+Argo CDがVMの期待される実行状態を保護するために自動的にVMを再起動してしまう可能性があるため、これ以降のいくつかのタスクはかなり迅速に実行する必要があります。
+====
 
-On this screen use either the `Stop` button, or select the option for `Stop` from the `Actions` drop down menu.
+この画面で、`Stop（停止）` ボタンを使用するか、`Actions（アクション）` ドロップダウンメニューから `Stop（停止）` のオプションを選択します。
 
 image::rh1/424-stop-control-vm.png[link="self", window=blank, width="100%"]
 
-With the virtual machine stopped, you now have the option to `Delete` the VM available in the `Actions` drop down menu.
+仮想マシンが停止すると、`Actions（アクション）` ドロップダウンメニューでVMを `Delete（削除）` するオプションが利用可能になります。
 
 image::rh1/425-delete-control-vm.png[link="self", window=blank, width="100%"]
 
-Once deleted, return to the argo dashboard where you will likely see the restore operation already in progress.
+削除が完了したらArgoダッシュボードに戻ると、すでに復元操作が進行中である可能性が高いです。
 
-The Argo CD dashboard will step through an automated process where it will briefly show the following:
+Argo CDダッシュボードは自動化されたプロセスを進み、短時間のうちに以下のような状態遷移を表示します。
 
-. **Application status as "OutOfSync"** – indicating that the live cluster state no longer matches the Git source.
-. The deleted resource will **disappear from the resource tree** temporarily.
-. Within moments, Argo CD will **auto-sync**, and the deleted resource will **reappear**, restoring the desired state.
-. The status will return to **"Synced" and "Healthy"**, confirming self-healing has taken place.
+1. **アプリケーションステータスが「OutOfSync」になる** – 稼働中のクラスターの状態がGitのソースと一致しなくなったことを示します。
+2. 削除されたリソースが **リソースツリーから一時的に消失** します。
+3. すぐにArgo CDが **自動同期（Auto-sync）** を行い、削除されたリソースが **再表示** され、期待される状態が復元されます。
+4. ステータスが **「Synced（同期済み）」および「Healthy（健全）」** に戻り、セルフヒーリングが行われたことが確認されます。
 
 image::rh1/426-application-unhealthy.png[link="self", window=blank, width="100%"]
 
-After it has completed all of this tasks, it will return to the previous healthy state with all of the application components deployed as desired.
+すべてのタスクが完了すると、期待通りにすべてのアプリケーションコンポーネントがデプロイされた、以前の健全な状態に戻ります。
 
 image::rh1/427-application-healthy.png[link="self", window=blank, width="100%"]
 
-You can also use this opportunity to verify that the https://{modernize_ocp_virt_username}-ingress-istio-gateway.{modernize_ocp_virt_apps_domain}[Travel Control Dashboard^] is still in working order.
+この機会を利用して、 https://{modernize_ocp_virt_username}-ingress-istio-gateway.{modernize_ocp_virt_apps_domain}[Travel Control Dashboard^] がまだ正常に動作しているか検証することもできます。
 
-*Congratulations!!* You helped the _Travel Agency_ company to automate their whole solution now through Red Hat OpenShift GitOps.
+*おめでとうございます！！* これで、*Travel Agency* 社のソリューション全体を Red Hat OpenShift GitOps を通じて自動化することができました。
 
+== Summary（まとめ）
 
-== Summary
-
-In this module we learned about Red Hat OpenShift GitOps, and how it can be used to deploy an application or a VM in a declarative fashion. We also demonstrated how it can be used to self-heal applications that have been affected by user error or other unforseen circumstances by restoring resources to known good desired state.
+このモジュールでは、Red Hat OpenShift GitOpsについて、およびアプリケーションやVMを宣言的な方法でデプロイするためにそれがどのように使用できるかを学びました。また、一度アプリケーションや仮想マシンがGitOpsによって管理されれば、リソースを既知の良好な期待される状態に復元することで、ユーザーエラーやその他の予期せぬ事態によって影響を受けたアプリケーションをセルフヒーリングできることも実証しました。
